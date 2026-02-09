@@ -1,50 +1,60 @@
-
-
+import { HomePage, initHomePage } from "./pages/HomePage.js";
 
 export function createRouter(appSelector) {
-  const appRoot = document.querySelector(appSelector);
-  if (!appRoot) throw new Error(`Hittar inte elementet: ${appSelector}`);
+  const outlet = document.querySelector(appSelector);
+  if (!outlet) throw new Error(`Element not found: ${appSelector}`);
 
-  /*på routes lägger vi in navigering tex*/
-    
   const routes = {
-    home: {
-      view: HomePage,
-      mount: mountHomePage
-    },
-
+    "/": { view: HomePage, mount: initHomePage }
   };
-  
-  /*lägger till id till url tex posts om det behövs för att se en speciell inlaggd bild eller tråd på en viss sida. */
+
   function parseHash() {
-    const raw = (location.hash || "#home").slice(1); 
-    const [route, query] = raw.split("?");
-    const params = Object.fromEntries(new URLSearchParams(query || ""));
-    return { route, params };
+    const raw = (location.hash || "#/").slice(1); // tar bort "#"
+    const [pathPart, queryPart] = raw.split("?");
+    const parts = pathPart.split("/").filter(Boolean);
+
+    const path = parts.length === 0 ? "/" : `/${parts[0]}`;
+    const rest = parts.slice(1);
+    const params = Object.fromEntries(new URLSearchParams(queryPart || ""));
+
+    return { path, rest, params };
   }
-    
 
   async function render() {
-    const { route, params } = parseHash();
-    const pageFn = routes[route] || routes.home;
+    try {
+      const { path, rest, params } = parseHash();
 
-
-
-    const header = document.querySelector("#site-header");
-    const hideNavroutes = ["lägg in route vi ska dölja navbar från."]
-    const hideNav = hideNavroutes.includes(route);
-
-
-    if(!hideNav) {
-      header.replaceChildren();
-    }
-      else {
-        header.innerHTML = navBar();
+      // placeholder för "#/character/:id"
+      if (path === "/character") {
+        const id = rest[0];
+        outlet.innerHTML = `
+          <section class="container">
+            <div class="frame">
+              <h1>Details page</h1>
+              <p>Character ID: <strong>${id ?? "missing"}</strong></p>
+              <p><a href="#/">Back</a></p>
+            </div>
+          </section>
+        `;
+        return;
       }
-    
-    appRoot.innerHTML = pageFn.view(params);
 
-    await pageFn.mount?.(params);
+      const page = routes[path] || routes["/"];
+      outlet.innerHTML = await page.view(params);
+      if (page.mount) await page.mount(params);
+
+    } catch (err) {
+      console.error("Router render error:", err);
+      outlet.innerHTML = `
+        <section class="container">
+          <div class="frame">
+            <h1>Something went wrong</h1>
+            <p>Open the Console for details. (The page should not be blank.)</p>
+            <p><a href="#/">Try again</a></p>
+          </div>
+        </section>
+      `;
+    }
   }
 
   window.addEventListener("hashchange", render);
