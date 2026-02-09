@@ -1,0 +1,54 @@
+{
+  "characters": [
+    {
+      "id": 1,
+      "name": "Harry Potter",
+      "house": "Gryffindor",
+      "age": 17,
+      "favoriteSpell": "Expelliarmus",
+      "role": "Student",
+      "gender": "Male",
+      "favorite": false
+    },
+    {
+      "id": 2,
+      "name": "Hermione Granger",
+      "house": "Gryffindor",
+      "age": 17,
+      "favoriteSpell": "Alohomora",
+      "role": "Student",
+      "gender": "Female",
+      "favorite": false
+    },
+    {
+      "id": 3,
+      "name": "Ron Weasley",
+      "house": "Gryffindor",
+      "age": 17,
+      "favoriteSpell": "Wingardium Leviosa",
+      "role": "Student",
+      "gender": "Male",
+      "favorite": false
+    },
+    {
+      "id": 4,
+      "name": "Draco Malfoy",
+      "house": "Slytherin",
+      "age": 17,
+      "favoriteSpell": "Serpensortia",
+      "role": "Student",
+      "gender": "Male",
+      "favorite": false
+    },
+    {
+      "id": 5,
+      "name": "Albus Dumbledore",
+      "house": "Gryffindor",
+      "age": 115,
+      "favoriteSpell": "Fawkes Summoning",
+      "role": "Headmaster",
+      "gender": "Male",
+      "favorite": false
+    }
+  ]
+}
