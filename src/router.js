@@ -1,52 +1,37 @@
+import { renderCharacterPage } from "../Pages/CharacterPage.js";
+// import { mountHomePage } from "../Pages/HomePage.js";
 
+export function createRouter(outletSelector) {
+  const outlet = document.querySelector(outletSelector);
+  if (!outlet) throw new Error("Hittar inte outlet");
 
-
-export function createRouter(appSelector) {
-  const appRoot = document.querySelector(appSelector);
-  if (!appRoot) throw new Error(`Hittar inte elementet: ${appSelector}`);
-
-  /*på routes lägger vi in navigering tex*/
-    
   const routes = {
     home: {
-      view: HomePage,
-      mount: mountHomePage
+      view: () => "<h1>Home</h1>", // kan lämnas tom
+      mount: async () => {
+        outlet.innerHTML = "<h1>Home Page</h1>"; // tillfällig home
+      }
     },
-
+    characters: {
+      view: () => "", // routern bryr sig inte om HTML
+      mount: async () => {
+        await renderCharacterPage(); // CharacterPage renderar allt i #outlet
+      }
+    }
   };
-  
-  /*lägger till id till url tex posts om det behövs för att se en speciell inlaggd bild eller tråd på en viss sida. */
+
   function parseHash() {
-    const raw = (location.hash || "#home").slice(1); 
-    const [route, query] = raw.split("?");
-    const params = Object.fromEntries(new URLSearchParams(query || ""));
-    return { route, params };
+    return (location.hash || "#home").slice(1);
   }
-    
 
   async function render() {
-    const { route, params } = parseHash();
-    const pageFn = routes[route] || routes.home;
+    const route = parseHash();
+    const page = routes[route] || routes.home;
 
-
-
-    const header = document.querySelector("#site-header");
-    const hideNavroutes = ["lägg in route vi ska dölja navbar från."]
-    const hideNav = hideNavroutes.includes(route);
-
-
-    if(!hideNav) {
-      header.replaceChildren();
-    }
-      else {
-        header.innerHTML = navBar();
-      }
-    
-    appRoot.innerHTML = pageFn.view(params);
-
-    await pageFn.mount?.(params);
+    outlet.innerHTML = page.view();
+    await page.mount();
   }
 
   window.addEventListener("hashchange", render);
-  render();
+  window.addEventListener("load", render);
 }
