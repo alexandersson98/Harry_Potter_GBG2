@@ -12,7 +12,6 @@ export function createRouter(appSelector) {
       view: HomePage,
       mount: mountHomePage
     },
-
   };
   
   /*lägger till id till url tex posts om det behövs för att se en speciell inlaggd bild eller tråd på en viss sida. */
