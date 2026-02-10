@@ -1,14 +1,8 @@
-/* =========================
-   Wizardpedia – Modern HP Theme (Cozy Dark + Glass)
-   Drop-in replacement for src/styles/style.css
-   ========================= */
 
-/* ---------- Theme tokens ---------- */
+/* ---------- Theme ---------- */
 :root{
-  --bg-ink: #050814;          /* deep night */
-  --bg-ink-2:#0b1228;         /* navy */
-  --parchment:#f5f1e8;        /* warm paper */
-  --parchment-2:#efe7d6;
+  --bg-ink: #030b0a;
+  --bg-ink-2:#071714;        
 
   --text:#e9edf6;
   --text-2: rgba(255,255,255,.92);
@@ -19,14 +13,14 @@
   --bronze:#8b5e3c;
   --wand:#6b3f2a;
 
-  --accent:#c7b6ff;           /* “magic” lavender */
-  --accent-2:#9b7cff;
+  --accent:#8affc1;
+  --accent-2:#5fe6a4;
 
   --border: rgba(214,179,91,.28);
   --border-strong: rgba(18,24,38,.85);
 
-  --shadow: 0 18px 60px rgba(0,0,0,.45);
-  --shadow-soft: 0 10px 30px rgba(0,0,0,.32);
+  --shadow: 0 20px 70px rgba(0,0,0,.55);
+  --shadow-soft: 0 12px 32px rgba(0,0,0,.35);
 
   --radius: 18px;
   --radius-sm: 12px;
@@ -36,7 +30,16 @@
 
 /* ---------- Base / Reset ---------- */
 *{ box-sizing:border-box; }
-html, body{ height:100%; }
+html, body{ min-height:100%; }
+
+html,
+body,
+*{
+  cursor:
+    url("/cursors/magical-wand.cur"),
+    auto;
+}
+
 
 body{
   margin:0;
@@ -48,17 +51,27 @@ body{
   background: var(--bg-ink) url("/images/hpbackground.png") center/cover no-repeat fixed;
 }
 
+
 /* Dark overlay + subtle “magic” highlight for readability */
 body::before{
   content:"";
   position: fixed;
   inset:0;
   background:
-    radial-gradient(900px 540px at 50% -10%, rgba(214,179,91,.14), rgba(0,0,0,.0)),
-    linear-gradient(180deg, rgba(0,0,0,.78), rgba(0,0,0,.72));
+    radial-gradient(
+      900px 520px at 50% 0%,
+      rgba(124,255,178,.18),
+      rgba(0,0,0,.0)
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.514),
+      rgba(0, 0, 0, 0.568)
+    );
   pointer-events:none;
   z-index:-1;
 }
+
 
 /* Accessible focus */
 :focus-visible{
@@ -99,12 +112,12 @@ a:hover{
 
 /* Glass main frame */
 .frame{
-  background: rgba(18, 24, 38, .52);
-  border: 2px solid var(--border);
+  background: rgba(10, 30, 25, .55);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 18px;
-  backdrop-filter: blur(7px);
+  backdrop-filter: blur(10px);
 }
 
 /* ---------- Header / Nav (works with many nav markups) ---------- */
@@ -163,7 +176,6 @@ a:hover{
   color: rgba(255,255,255,.92);
   border-radius: 12px;
   padding: 8px 10px;
-  cursor:pointer;
 }
 #burgerBtn:hover{
   border-color: rgba(214,179,91,.45);
@@ -201,11 +213,11 @@ a:hover{
 /* ---------- Cards ---------- */
 .card,
 .side-card{
-  background: rgba(245,241,232,.08); /* glass */
-  border: 2px solid rgba(255,255,255,.14);
+  background: rgba(8, 24, 20, .45);
+  border: 1px solid rgba(48, 85, 64, 0.22);
   border-radius: var(--radius);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
 }
 
 .main-card{ padding: 16px; }
@@ -366,7 +378,6 @@ input[type="search"]:focus{
 }
 
 button{
-  cursor:pointer;
   font-weight: 1000;
   border-radius: 14px;
   border: 2px solid rgba(214,179,91,.55);
@@ -490,22 +501,21 @@ button:active{
 }
 
 .char-card{
-  border: 2px solid rgba(255,255,255,.16);
+  background: rgba(6, 20, 18, .55);
+  border: 1px solid rgba(78, 87, 82, 0.25);
   border-radius: 16px;
-  background: rgba(0,0,0,.18);
-  box-shadow: 0 10px 20px rgba(0,0,0,.25);
+  box-shadow: 0 12px 28px rgba(0,0,0,.45);
   padding: 12px;
-  text-align: left;
-  cursor: pointer;
   position: relative;
-  transition: transform .08s ease, border-color .12s ease;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
 }
 .char-card:hover{
   transform: translateY(-2px);
+  box-shadow: 0 18px 42px rgba(0,0,0,.65);
   border-color: rgba(214,179,91,.35);
 }
 
-.char-imgwrap{
+
   .char-imgwrap{
   position: relative;
   width: 100%;
@@ -516,7 +526,7 @@ button:active{
   background: rgba(0,0,0,.25);
 }
 
-}
+
 .char-imgwrap img{
   width: 100%;
   height: 100%;
@@ -541,28 +551,18 @@ button:active{
 
 .fav-overlay{
   position: absolute;
-  top: 10px;
-  right: 10px;
-
-  width: 42px;
-  height: 42px;
+  top: 8px;
+  right: 2px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-
-  border: 2px solid rgba(214,179,91,.55);
-  background: rgba(0,0,0,.35);
-  color: rgba(255,255,255,.92);
-
-  display: grid;
-  place-items: center;
-
+  border: 1px solid rgba(214,179,91,.28);
+  background: rgba(0,0,0,.55);
+  color: var(--gold);
   font-size: 18px;
-  font-weight: 1000;
-  cursor: pointer;
-
-  box-shadow: 0 10px 18px rgba(0,0,0,.35);
-  backdrop-filter: blur(6px);
-
-  transition: transform .12s ease, filter .12s ease, background .12s ease;
+  display:grid;
+  place-items:center;
+  box-shadow: 0 6px 16px rgba(0,0,0,.45);
 }
 
 .fav-overlay:hover{
@@ -571,7 +571,7 @@ button:active{
 }
 
 .fav-overlay[aria-pressed="true"]{
-  background: linear-gradient(180deg, rgba(214,179,91,.92), rgba(140,106,42,.92));
+  background: radial-gradient(circle at 30% 30%, #ffeeb6, #8c6a2aeb);
   color: #0b1220;
   border-color: rgba(214,179,91,.75);
 }
@@ -690,5 +690,57 @@ button:active{
 }
 .info-grid strong{
   color: rgba(255,255,255,.92);
+}
+
+/* ===== Magic click effect ===== */
+.magic-spark {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+
+  /* glow */
+  background: radial-gradient(circle, rgba(124,255,178,.95) 0%, rgba(124,255,178,.15) 55%, rgba(124,255,178,0) 70%);
+  box-shadow:
+    0 0 10px rgba(124,255,178,.70),
+    0 0 26px rgba(124,255,178,.35);
+
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0.95;
+
+  animation: magic-pop 520ms ease-out forwards;
+}
+
+@keyframes magic-pop {
+  0%   { transform: translate(-50%, -50%) scale(0.7); opacity: .95; }
+  65%  { transform: translate(-50%, -50%) scale(2.4); opacity: .55; }
+  100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
+}
+
+/* Optional: tiny particles */
+.magic-particle {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+
+  background: rgba(214,179,91,.95);
+  box-shadow: 0 0 10px rgba(214,179,91,.55);
+
+  transform: translate(-50%, -50%);
+  animation: particle-fly 520ms ease-out forwards;
+}
+
+@keyframes particle-fly {
+  0%   { transform: translate(-50%, -50%) translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
 }
 
