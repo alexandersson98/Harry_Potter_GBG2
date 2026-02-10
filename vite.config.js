@@ -4,6 +4,7 @@ import { VitePWA } from "vite-plugin-pwa";
 const API_PREFIXES = ["/api/characters", "/api/locations", "/api/spells", "/api/beasts"];
 
 export default defineConfig({
+ base: "/Harry_Potter_GBG2/",
     server: {
         proxy: { 
             "/api": {

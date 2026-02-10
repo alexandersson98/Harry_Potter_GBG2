@@ -1,49 +1,63 @@
 
+import { HomePage, mountHomePage } from "./pages/HomePage.js";
+import { navBar } from "./components/NavBar.js";
+
+export function createRouter(outletSelector) {
+  const outlet = document.querySelector(outletSelector);
+  if (!outlet) throw new Error(`Hittar inte element: ${outletSelector}`);
+
+  const header = document.querySelector("#site-header");
 
 
-export function createRouter(appSelector) {
-  const appRoot = document.querySelector(appSelector);
-  if (!appRoot) throw new Error(`Hittar inte elementet: ${appSelector}`);
-
-  /*på routes lägger vi in navigering tex*/
-    
   const routes = {
-    home: {
+    "/": {
       view: HomePage,
-      mount: mountHomePage
+      mount: mountHomePage,
+      showNav: true,
+    },
+
+    notFound: {
+      view: () => `<h1>404</h1><p>Sidan finns inte.</p>`,
+      mount: null,
+      showNav: true,
     },
   };
-  
-  /*lägger till id till url tex posts om det behövs för att se en speciell inlaggd bild eller tråd på en viss sida. */
+
   function parseHash() {
-    const raw = (location.hash || "#home").slice(1); 
-    const [route, query] = raw.split("?");
-    const params = Object.fromEntries(new URLSearchParams(query || ""));
-    return { route, params };
+    const raw = (location.hash || "#/").slice(1); 
+    const [pathPart, queryPart] = raw.split("?");
+    const parts = (pathPart || "/").split("/").filter(Boolean);
+
+    const path = parts.length === 0 ? "/" : `/${parts[0]}`;
+    const rest = parts.slice(1);
+    const params = Object.fromEntries(new URLSearchParams(queryPart || ""));
+
+    return { path, rest, params };
   }
-    
+
+  function ensureNavMounted() {
+    if (!header) return;
+    if (header.dataset.mounted === "1") return;
+    header.innerHTML = navBar();
+    header.dataset.mounted = "1";
+  }
+
+  function setNavVisible(visible) {
+    if (!header) return;
+    header.hidden = !visible;
+    if (visible) ensureNavMounted();
+  }
 
   async function render() {
-    const { route, params } = parseHash();
-    const pageFn = routes[route] || routes.home;
+    const { path, rest, params } = parseHash();
+    const page = routes[path] || routes.notFound;
 
+    setNavVisible(page.showNav !== false);
 
+    const ctx = { path, rest, params };
 
-    const header = document.querySelector("#site-header");
-    const hideNavroutes = ["lägg in route vi ska dölja navbar från."]
-    const hideNav = hideNavroutes.includes(route);
-
-
-    if(!hideNav) {
-      header.replaceChildren();
-    }
-      else {
-        header.innerHTML = navBar();
-      }
-    
-    appRoot.innerHTML = pageFn.view(params);
-
-    await pageFn.mount?.(params);
+    outlet.innerHTML = page.view(ctx);
+    await page.mount?.(ctx);
   }
 
   window.addEventListener("hashchange", render);
