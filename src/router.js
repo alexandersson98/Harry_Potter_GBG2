@@ -1,6 +1,6 @@
 
 import { HomePage, mountHomePage } from "./pages/HomePage.js";
-import { navBar } from "./components/NavBar.js";
+import { navBar } from "./components/Nav.js";
 
 export function createRouter(outletSelector) {
   const outlet = document.querySelector(outletSelector);
@@ -38,7 +38,7 @@ export function createRouter(outletSelector) {
   function ensureNavMounted() {
     if (!header) return;
     if (header.dataset.mounted === "1") return;
-    header.innerHTML = navBar();
+    header.innerHTML = Nav();
     header.dataset.mounted = "1";
   }
 
