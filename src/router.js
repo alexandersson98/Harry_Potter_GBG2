@@ -1,6 +1,6 @@
 
 import { HomePage, mountHomePage } from "./pages/HomePage.js";
-import { navBar } from "./components/Nav.js";
+import { Nav } from "./components/Nav.js";
 
 export function createRouter(outletSelector) {
   const outlet = document.querySelector(outletSelector);

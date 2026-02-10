@@ -71,7 +71,7 @@ function mapApiToCard(c) {
   };
 }
 
-export async function HomePage() {
+export function HomePage() {
   return `
     <main class="container">
       <section class="frame" aria-label="Home">
@@ -171,7 +171,7 @@ export async function HomePage() {
   `;
 }
 
-export async function initHomePage() {
+export async function mountHomePage() {
   const gridEl = document.getElementById("characterGrid");
   const inputEl = document.getElementById("searchInput");
   const reloadBtn = document.getElementById("reloadBtn");
