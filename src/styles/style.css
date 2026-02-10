@@ -506,12 +506,16 @@ button:active{
 }
 
 .char-imgwrap{
+  .char-imgwrap{
+  position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: 14px;
   overflow: hidden;
   border: 2px solid rgba(214,179,91,.30);
   background: rgba(0,0,0,.25);
+}
+
 }
 .char-imgwrap img{
   width: 100%;
@@ -535,11 +539,45 @@ button:active{
   text-align: center;
 }
 
-.char-actions{
-  display:flex;
-  justify-content:flex-end;
-  margin-top: 10px;
+.fav-overlay{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+
+  border: 2px solid rgba(214,179,91,.55);
+  background: rgba(0,0,0,.35);
+  color: rgba(255,255,255,.92);
+
+  display: grid;
+  place-items: center;
+
+  font-size: 18px;
+  font-weight: 1000;
+  cursor: pointer;
+
+  box-shadow: 0 10px 18px rgba(0,0,0,.35);
+  backdrop-filter: blur(6px);
+
+  transition: transform .12s ease, filter .12s ease, background .12s ease;
 }
+
+.fav-overlay:hover{
+  transform: scale(1.06);
+  filter: brightness(1.05);
+}
+
+.fav-overlay[aria-pressed="true"]{
+  background: linear-gradient(180deg, rgba(214,179,91,.92), rgba(140,106,42,.92));
+  color: #0b1220;
+  border-color: rgba(214,179,91,.75);
+}
+
+
+
 
 /* ===== Modal / Popup ===== */
 .modal-backdrop{

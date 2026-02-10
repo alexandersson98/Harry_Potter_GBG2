@@ -71,7 +71,7 @@ function mapApiToCard(c) {
   };
 }
 
-export async function HomePage() {
+export function HomePage() {
   return `
     <main class="container">
       <section class="frame" aria-label="Home">
@@ -171,7 +171,7 @@ export async function HomePage() {
   `;
 }
 
-export async function initHomePage() {
+export async function mountHomePage() {
   const gridEl = document.getElementById("characterGrid");
   const inputEl = document.getElementById("searchInput");
   const reloadBtn = document.getElementById("reloadBtn");
@@ -203,27 +203,28 @@ export async function initHomePage() {
       const fav = isFav(favs, c.id);
 
       return `
-        <button class="char-card" type="button" data-open-id="${encodeURIComponent(String(c.id))}">
-          <div class="char-imgwrap">
-            ${c.image
-              ? `<img src="${c.image}" alt="${c.name}" loading="lazy" />`
-              : `<div class="char-fallback" aria-hidden="true">✨</div>`
-            }
-          </div>
-          <div class="char-name">${c.name}</div>
+  <div class="char-card" role="button" tabindex="0" data-open-id="${encodeURIComponent(String(c.id))}">
+    <div class="char-imgwrap">
+      ${c.image
+        ? `<img src="${c.image}" alt="${c.name}" loading="lazy" />`
+        : `<div class="char-fallback" aria-hidden="true">✨</div>`
+      }
 
-          <div class="char-actions">
-            <button
-              class="iconbtn"
-              type="button"
-              data-fav-id="${String(c.id)}"
-              aria-label="Toggle favorite"
-              aria-pressed="${fav ? "true" : "false"}"
-              title="${fav ? "Remove favorite" : "Add favorite"}"
-            >${fav ? "★" : "☆"}</button>
-          </div>
-        </button>
-      `;
+      <button
+        class="fav-overlay"
+        type="button"
+        data-fav-id="${String(c.id)}"
+        aria-label="Toggle favorite"
+        aria-pressed="${fav ? "true" : "false"}"
+        title="${fav ? "Remove favorite" : "Add favorite"}"
+      >${fav ? "★" : "☆"}</button>
+    </div>
+
+    <div class="char-name">${c.name}</div>
+  </div>
+`;
+
+
     }).join("");
   }
 
