@@ -91,7 +91,7 @@ export function HomePage() {
 
               <div class="media" aria-label="Featured image">
                 <img
-                  src="https://images.unsplash.com/photo-1522098543979-ffc7f79d5af1?auto=format&fit=crop&w=900&q=70"
+                  src="icons/icon-512.png"
                   alt="Castle-like view reminiscent of Hogwarts"
                   loading="lazy"
                 />
