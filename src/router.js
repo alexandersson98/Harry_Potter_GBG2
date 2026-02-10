@@ -1,17 +1,32 @@
-import { HomePage, initHomePage } from "./pages/HomePage.js";
 
-export function createRouter(appSelector) {
-  const outlet = document.querySelector(appSelector);
-  if (!outlet) throw new Error(`Element not found: ${appSelector}`);
+import { HomePage, mountHomePage } from "./pages/HomePage.js";
+import { navBar } from "./components/NavBar.js";
+
+export function createRouter(outletSelector) {
+  const outlet = document.querySelector(outletSelector);
+  if (!outlet) throw new Error(`Hittar inte element: ${outletSelector}`);
+
+  const header = document.querySelector("#site-header");
+
 
   const routes = {
-    "/": { view: HomePage, mount: initHomePage }
+    "/": {
+      view: HomePage,
+      mount: mountHomePage,
+      showNav: true,
+    },
+
+    notFound: {
+      view: () => `<h1>404</h1><p>Sidan finns inte.</p>`,
+      mount: null,
+      showNav: true,
+    },
   };
 
   function parseHash() {
-    const raw = (location.hash || "#/").slice(1); // tar bort "#"
+    const raw = (location.hash || "#/").slice(1); 
     const [pathPart, queryPart] = raw.split("?");
-    const parts = pathPart.split("/").filter(Boolean);
+    const parts = (pathPart || "/").split("/").filter(Boolean);
 
     const path = parts.length === 0 ? "/" : `/${parts[0]}`;
     const rest = parts.slice(1);
@@ -20,41 +35,29 @@ export function createRouter(appSelector) {
     return { path, rest, params };
   }
 
+  function ensureNavMounted() {
+    if (!header) return;
+    if (header.dataset.mounted === "1") return;
+    header.innerHTML = navBar();
+    header.dataset.mounted = "1";
+  }
+
+  function setNavVisible(visible) {
+    if (!header) return;
+    header.hidden = !visible;
+    if (visible) ensureNavMounted();
+  }
+
   async function render() {
-    try {
-      const { path, rest, params } = parseHash();
+    const { path, rest, params } = parseHash();
+    const page = routes[path] || routes.notFound;
 
-      // placeholder för "#/character/:id"
-      if (path === "/character") {
-        const id = rest[0];
-        outlet.innerHTML = `
-          <section class="container">
-            <div class="frame">
-              <h1>Details page</h1>
-              <p>Character ID: <strong>${id ?? "missing"}</strong></p>
-              <p><a href="#/">Back</a></p>
-            </div>
-          </section>
-        `;
-        return;
-      }
+    setNavVisible(page.showNav !== false);
 
-      const page = routes[path] || routes["/"];
-      outlet.innerHTML = await page.view(params);
-      if (page.mount) await page.mount(params);
+    const ctx = { path, rest, params };
 
-    } catch (err) {
-      console.error("Router render error:", err);
-      outlet.innerHTML = `
-        <section class="container">
-          <div class="frame">
-            <h1>Something went wrong</h1>
-            <p>Open the Console for details. (The page should not be blank.)</p>
-            <p><a href="#/">Try again</a></p>
-          </div>
-        </section>
-      `;
-    }
+    outlet.innerHTML = page.view(ctx);
+    await page.mount?.(ctx);
   }
 
   window.addEventListener("hashchange", render);
