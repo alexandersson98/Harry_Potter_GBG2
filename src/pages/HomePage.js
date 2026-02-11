@@ -10,7 +10,7 @@ mount:
 - Kopplar ihop data + UI.
 */
 
-import { getCharacters } from "../services/api.js";
+import { getCharacters } from "../services/characterApi.js";
 
 const FAV_KEY = "wizardpedia:favorites";
 
