@@ -1,6 +1,6 @@
 /*  här lägger vi HTML kod som ska vara återanvändbar som tex navbar och footer så man enkelt kan lägga in den vart man vill ha den. underlättar skalbarhet och testning*/
 
-import { getCharacters, updateCharacter } from "../services/api.js";
+import { getCharacters, updateCharacter } from "../services/characterApi.js";
 
 export async function renderCharacterList() {
   const container = document.querySelector("#character-list");
