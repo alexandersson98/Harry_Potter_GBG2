@@ -1,8 +1,3 @@
-/*service klasserna ska innehålla logik för localstorage, api, server, */
-
-// src/services/api.js
-// Service: ansvarar för API-anrop och ev. hjälpfunktioner för fetch.
-
 const BASE_URL = "https://hp-api.onrender.com/api";
 
 async function safeFetchJson(url, options) {
@@ -21,8 +16,6 @@ async function safeFetchJson(url, options) {
   }
 }
 
-export async function getCharacters() {
-  // hp-api endpoint:
-  // https://hp-api.onrender.com/api/characters
-  return safeFetchJson(`${BASE_URL}/characters`);
+export async function getSpells() {
+  return safeFetchJson(`${BASE_URL}/spells`);
 }
