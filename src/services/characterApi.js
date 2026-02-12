@@ -22,7 +22,3 @@ async function safeFetchJson(url, options) {
 export async function getCharacters() {
   return safeFetchJson(`${BASE_URL}/characters`);
 }
-
-export async function getSpells() {
-  return safeFetchJson(`${BASE_URL}/spells`);
-}
