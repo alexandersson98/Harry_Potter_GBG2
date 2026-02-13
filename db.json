@@ -50,5 +50,148 @@
       "gender": "Male",
       "favorite": false
     }
+  ],
+
+  "beasts": [
+    {
+      "id": 1,
+      "name": "Hungarian Horntail",
+      "category": "Dragon",
+      "type": "Fire-breathing",
+      "dangerLevel": 5,
+      "strengths": ["Extremely aggressive", "Fire breath", "Armored scales"],
+      "habitat": "Mountains",
+      "alignment": "Neutral"
+    },
+    {
+      "id": 2,
+      "name": "Ukrainian Ironbelly",
+      "category": "Dragon",
+      "type": "Fire-breathing",
+      "dangerLevel": 5,
+      "strengths": ["Massive size", "Crushing strength", "Thick scales"],
+      "habitat": "Eastern Europe",
+      "alignment": "Neutral"
+    },
+    {
+      "id": 3,
+      "name": "Basilisk",
+      "category": "Serpent",
+      "type": "Dark Creature",
+      "dangerLevel": 5,
+      "strengths": ["Kills with eye contact", "Deadly venom", "Gigantic size"],
+      "habitat": "Hidden chambers",
+      "alignment": "Dark"
+    },
+    {
+      "id": 4,
+      "name": "Werewolf",
+      "category": "Humanoid Beast",
+      "type": "Cursed",
+      "dangerLevel": 4,
+      "strengths": ["Enhanced strength", "Regeneration", "Savage instincts"],
+      "habitat": "Forests",
+      "alignment": "Neutral"
+    },
+    {
+      "id": 5,
+      "name": "Acromantula",
+      "category": "Spider",
+      "type": "Giant Arachnid",
+      "dangerLevel": 4,
+      "strengths": ["Venomous bite", "Intelligent", "Lives in colonies"],
+      "habitat": "Forbidden Forest",
+      "alignment": "Neutral"
+    },
+    {
+      "id": 6,
+      "name": "Dementor",
+      "category": "Spirit",
+      "type": "Dark Entity",
+      "dangerLevel": 5,
+      "strengths": ["Drains happiness", "Dementor's Kiss", "Cannot be killed normally"],
+      "habitat": "Azkaban",
+      "alignment": "Dark"
+    },
+    {
+      "id": 7,
+      "name": "Hippogriff",
+      "category": "Hybrid",
+      "type": "Proud Creature",
+      "dangerLevel": 3,
+      "strengths": ["Flight", "Sharp talons", "Highly intelligent"],
+      "habitat": "Mountains and open fields",
+      "alignment": "Neutral"
+    },
+    {
+      "id": 8,
+      "name": "Thestral",
+      "category": "Winged Beast",
+      "type": "Death-related",
+      "dangerLevel": 2,
+      "strengths": ["Invisibility to most people", "Flight", "Loyal"],
+      "habitat": "Hogwarts grounds",
+      "alignment": "Neutral"
+    },
+    {
+      "id": 9,
+      "name": "Phoenix",
+      "category": "Mythical Bird",
+      "type": "Rebirth",
+      "dangerLevel": 2,
+      "strengths": ["Healing tears", "Rebirth from ashes", "Teleportation"],
+      "habitat": "Rare / bonded to wizard",
+      "alignment": "Light"
+    },
+    {
+      "id": 10,
+      "name": "Unicorn",
+      "category": "Mythical Beast",
+      "type": "Pure Creature",
+      "dangerLevel": 1,
+      "strengths": ["Purity magic", "Powerful blood properties"],
+      "habitat": "Forests",
+      "alignment": "Light"
+    },
+    {
+      "id": 11,
+      "name": "Niffler",
+      "category": "Treasure Hunter",
+      "type": "Small Beast",
+      "dangerLevel": 1,
+      "strengths": ["Attracted to shiny objects", "Burrowing ability"],
+      "habitat": "Underground",
+      "alignment": "Neutral"
+    },
+    {
+      "id": 12,
+      "name": "Bowtruckle",
+      "category": "Tree Guardian",
+      "type": "Small Creature",
+      "dangerLevel": 1,
+      "strengths": ["Camouflage", "Tree protection"],
+      "habitat": "Forests",
+      "alignment": "Neutral"
+    },
+    {
+      "id": 13,
+      "name": "Obscurus",
+      "category": "Dark Force",
+      "type": "Parasitic Magic",
+      "dangerLevel": 5,
+      "strengths": ["Explosive destructive power", "Unstable magic"],
+      "habitat": "Inside suppressed young wizard",
+      "alignment": "Dark"
+    },
+    {
+      "id": 14,
+      "name": "Grindylow",
+      "category": "Water Demon",
+      "type": "Aquatic",
+      "dangerLevel": 2,
+      "strengths": ["Sharp claws", "Water ambush"],
+      "habitat": "Lakes",
+      "alignment": "Neutral"
+    }
   ]
 }

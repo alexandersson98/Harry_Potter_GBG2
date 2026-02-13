@@ -79,9 +79,9 @@ export function beastPage(){
   <!-- MODAL (popup) -->
   <div class="modal-backdrop" id="beastModalBackdrop" hidden></div>
 </main>
-    `
+    `;
 }
 
-export function mountBeastPage(){
+export async function mountBeastPage(){
     document.querySelector("#beastModalBackdrop").innerHTML = beastList();
 }
