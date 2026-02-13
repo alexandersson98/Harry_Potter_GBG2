@@ -2,6 +2,7 @@
 import { HomePage, mountHomePage } from "./pages/HomePage.js";
 import { Nav } from "./components/Nav.js";
 import { SpellsPage, mountSpellsPage } from "./pages/SpellsPage.js";
+import { beastPage, mountBeastPage } from  "./pages/beastspage.js";
 
 
 export function createRouter(outletSelector) {
@@ -21,6 +22,12 @@ export function createRouter(outletSelector) {
     "/spells": {
       view: SpellsPage,
       mount: mountSpellsPage,
+      showNav: true,
+    },
+
+    "/beasts": {
+      view: beastPage,
+      mount: mountBeastPage,
       showNav: true,
     },
 
