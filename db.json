@@ -193,5 +193,98 @@
       "habitat": "Lakes",
       "alignment": "Neutral"
     }
+  ],
+  
+  "locations": [
+    {
+      "id": 1,
+      "name": "Hogwarts Castle",
+      "type": "School",
+      "description": "The famous school of witchcraft and wizardry.",
+      "characters": ["Harry Potter", "Hermione Granger", "Albus Dumbledore"],
+      "beasts": ["Hippogriff", "Basilisk"],
+      "spells": ["Expelliarmus", "Lumos"]
+    },
+    {
+      "id": 2,
+      "name": "Diagon Alley",
+      "type": "Marketplace",
+      "description": "A hidden wizarding shopping street in London.",
+      "characters": ["Harry Potter", "Hagrid"],
+      "beasts": [],
+      "spells": ["Alohomora"]
+    },
+    {
+      "id": 3,
+      "name": "Forbidden Forest",
+      "type": "Forest",
+      "description": "A dark and dangerous forest near Hogwarts.",
+      "characters": ["Hagrid"],
+      "beasts": ["Centaur", "Acromantula"],
+      "spells": []
+    },
+    {
+      "id": 4,
+      "name": "Azkaban",
+      "type": "Prison",
+      "description": "Wizarding prison guarded by Dementors.",
+      "characters": ["Sirius Black"],
+      "beasts": ["Dementor"],
+      "spells": []
+    },
+    {
+      "id": 5,
+      "name": "Hogsmeade",
+      "type": "Village",
+      "description": "A wizard-only village near Hogwarts.",
+      "characters": ["Harry Potter"],
+      "beasts": [],
+      "spells": []
+    },
+    {
+      "id": 6,
+      "name": "Ministry of Magic",
+      "type": "Government",
+      "description": "Headquarters of magical law and order.",
+      "characters": ["Cornelius Fudge"],
+      "beasts": [],
+      "spells": []
+    },
+    {
+      "id": 7,
+      "name": "Malfoy Manor",
+      "type": "Mansion",
+      "description": "Home of the Malfoy family.",
+      "characters": ["Draco Malfoy", "Lucius Malfoy"],
+      "beasts": [],
+      "spells": []
+    },
+    {
+      "id": 8,
+      "name": "Godric's Hollow",
+      "type": "Village",
+      "description": "Birthplace of Harry Potter.",
+      "characters": ["Harry Potter"],
+      "beasts": [],
+      "spells": []
+    },
+    {
+      "id": 9,
+      "name": "Chamber of Secrets",
+      "type": "Hidden Chamber",
+      "description": "Ancient chamber beneath Hogwarts.",
+      "characters": ["Tom Riddle"],
+      "beasts": ["Basilisk"],
+      "spells": []
+    },
+    {
+      "id": 10,
+      "name": "Room of Requirement",
+      "type": "Magical Room",
+      "description": "A room that appears when needed.",
+      "characters": ["Harry Potter"],
+      "beasts": [],
+      "spells": ["Protego"]
+    }
   ]
 }
