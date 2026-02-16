@@ -1,5 +1,5 @@
 import { getLocations } from "../services/api/locationsApi.js";
-import { mapLocation } from "../domain/locationMapper.js";
+import { mapLocation } from "../domain/mappers/locationMapper.js";
 
 export function LocationsPage() {
   return `
