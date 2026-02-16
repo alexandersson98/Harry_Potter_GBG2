@@ -1,4 +1,4 @@
-import { getSpells } from "../services/spellsApi.js";
+import { getSpells } from "../services/api/spellsApi.js"
 
 export function SpellsPage() {
   return `
