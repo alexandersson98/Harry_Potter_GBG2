@@ -1,6 +1,6 @@
 const DEFAULT_TIMEOUT = 10000;
 
-async function request(path, { method = "GET", body, timeout = DEFAULT_TIMEOUT } = {}) {
+ export async function request(path, { method = "GET", body, timeout = DEFAULT_TIMEOUT } = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
 
