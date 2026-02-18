@@ -1,5 +1,6 @@
 import { beastList } from "../components/beastsList"
-
+import { getBeast } from "../services/api/beastsApi";
+import { getBeasts } from "../services/api/beastsApi";
 
 export function beastPage(){
     return `
@@ -84,4 +85,33 @@ export function beastPage(){
 
 export async function mountBeastPage(){
     document.querySelector("#beastModalBackdrop").innerHTML = beastList();
+
+    const gridEl = document.getElementById("beastGrid");
+    const statusEl = document.getElementById("beastStatusText");
+
+    function renderBeasts(gridEl, beasts){
+      gridEl.innerHTML = beasts.map(b => `<div class=meta>${ b.name }</div>`).join("");
+    }
+
+    
+       
+    async function load() {
+    gridEl.innerHTML = `<div class="meta">Loading...</div>`;
+    statusEl.textContent = "";
+
+    try {
+    const data = await getBeasts();
+    const arr = Array.isArray(data) ? data : data?.results ?? [];
+
+    renderBeasts(gridEl, arr);
+    statusEl.textContent = `showing ${arr.length} beasts`;
+  } catch (e) {
+    gridEl.innerHTML = `<div class="meta">Could not load data right now</div>`;
+    statusEl.textContent = "If you are offline, cached data may still be available.";
+    console.error(e);
+  }
 }
+    load();
+  }
+
+
