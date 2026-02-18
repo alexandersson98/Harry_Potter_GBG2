@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
-const BASE_URL = "https://hp-api.onrender.com/api";
+
 
 export default defineConfig({
  base: "/Harry_Potter_GBG2/",
@@ -41,8 +41,7 @@ export default defineConfig({
 
         runtimeCaching: [
             {
-            urlPattern: /^https:\/\/hp-api\.onrender\.com\/api\/.*/i,
-
+            urlPattern: ({ url }) => url.pathname.startsWith("/api/"),
             handler: "NetworkFirst",
 
             options: {
