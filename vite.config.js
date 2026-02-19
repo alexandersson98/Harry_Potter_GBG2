@@ -8,9 +8,9 @@ export default defineConfig({
     server: {
         proxy: { 
             "/api": {
-                target: "http://localhost:3001",
+                target: "https://hp-api.onrender.com",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
+        rewrite: (path) => path.replace(/^\/api/, "/api"),
       },
     },
   },
@@ -41,11 +41,11 @@ export default defineConfig({
 
         runtimeCaching: [
             {
-            urlPattern: ({ url }) => url.pathname.startsWith("/api/"),
+            urlPattern: ({ url }) => url.origin === "https://hp-api.onrender.com",
             handler: "NetworkFirst",
 
             options: {
-              cacheName: "api-cache",
+              cacheName: "hp-api-cache",
               expiration: {
                 maxEntries: 200,
                 maxAgeSeconds: 60 * 60 * 24, 
