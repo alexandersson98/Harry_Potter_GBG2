@@ -1,26 +1,36 @@
 const DEFAULT_TIMEOUT = 10000;
 
- export async function request(path, { method = "GET", body, timeout = DEFAULT_TIMEOUT } = {}) {
+export async function request(
+  url,
+  { method = "GET", body, timeout = DEFAULT_TIMEOUT, headers = {} } = {}
+) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
 
+  const finalHeaders = {
+    Accept: "application/json",
+    ...headers,
+  };
+
+  const hasBody = body !== undefined && body !== null;
+  if (hasBody) finalHeaders["Content-Type"] = "application/json";
+
   try {
-        const res = await fetch(path, {
-            method,
-            headers: {"Accept": "application/json",
-                "Content-Type": "application/json"
-             },
-             body: body ? JSON.stringify(body) : undefined,
-             signal: controller.signal
-        });
+    const res = await fetch(url, {
+      method,
+      headers: finalHeaders,
+      body: hasBody ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
+    });
 
-        if (!res.ok) {
-            throw new Error(` HTTP ${res.status} ${res.statusText}`);
-        }
-        const text = await res.text();
-        return text ? JSON.parse(text) : null;
+    const text = await res.text();
 
-    } finally {
-        clearTimeout(timer);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} ${res.statusText}${text ? ` - ${text}` : ""}`);
     }
+
+    return text ? JSON.parse(text) : null;
+  } finally {
+    clearTimeout(timer);
+  }
 }
