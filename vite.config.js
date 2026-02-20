@@ -15,7 +15,7 @@ export default defineConfig({
       "/remote-api": {
         target: "https://hp-api.onrender.com",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/remote-api/, "api"),
+        rewrite: (path) => path.replace(/^\/remote-api/, "/api"),
       }
     },
   },
@@ -25,8 +25,10 @@ export default defineConfig({
     plugins:[
         VitePWA({
             registerType: "autoUpdate",
+            devOptions: {enabled: true},
             includeAssets: ["HP-HP.png", "HP-logo.png"],
             manifest: {
+                id: "Harry_Potter_GBG2/",
                 name: "Wizardpedia",
                 short_name: "Wizardpedia",
                 description: "Wisardpedia PWA",
@@ -36,9 +38,9 @@ export default defineConfig({
                 start_url: "/Harry_Potter_GBG2/",
                 scope: "/Harry_Potter_GBG2/",
                 icons: [
-                    { src: "HP-logo.png", sizes: "192x192", type: "image/png" },
-                    { src: "HP-HP.png", sizes: "512x512", type: "image/png" },
-                    { src: "HP-HP.png", sizes: "512x512", type: "image/png", purpose: "maskable" }
+                    { src: "/Harry_Potter_GBG2/HP-logo.png", sizes: "192x192", type: "image/png" },
+                    { src: "/Harry_Potter_GBG2/HP-HP.png", sizes: "512x512", type: "image/png" },
+                    { src: "/Harry_Potter_GBG2/HP-HP.png", sizes: "512x512", type: "image/png", purpose: "maskable" }
                 ]
             },
             
