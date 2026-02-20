@@ -1,5 +1,6 @@
 import { getLocations } from "../services/api/locationsApi.js";
 import { mapLocation } from "../domain/mappers/locationMapper.js";
+import { locationList } from "../components/locationList.js";
 
 export function LocationsPage() {
   return `
@@ -35,20 +36,8 @@ export function LocationsPage() {
       <!-- MODAL -->
       <div class="modal-backdrop" id="locationModalBackdrop" hidden></div>
 
-      <div class="modal" id="locationModal" hidden>
-        <button class="modal-close" id="locationModalClose">×</button>
-
-        <div class="modal-head">
-          <h2 id="locationModalTitle"></h2>
-          <p id="locationModalSub"></p>
-        </div>
-
-        <div class="modal-body">
-          <div class="modal-right" id="locationModalInfo"></div>
-        </div>
-      </div>
-    </main>
-  `;
+      
+    </main>  
 }
 
 export async function mountLocationsPage() {
@@ -56,6 +45,7 @@ export async function mountLocationsPage() {
   const inputEl = document.getElementById("locationSearchInput");
   const reloadBtn = document.getElementById("locationReloadBtn");
   const statusEl = document.getElementById("locationStatusText");
+  document.querySelector("#locationModalBackdrop").innerHTML = locationList();
 
   const modal = document.getElementById("locationModal");
   const backdrop = document.getElementById("locationModalBackdrop");
