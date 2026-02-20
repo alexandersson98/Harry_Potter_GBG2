@@ -1,16 +1,6 @@
-// src/services/api/locationsApi.js
-const BASE_URL = "/api/locations"; 
+import { request } from "../httpClient";
 
-async function safeFetchJson(url) {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("API_ERROR");
-    return await res.json();
-  } catch {
-    throw new Error("NETWORK_ERROR");
-  }
-}
+const BASE = `${import.meta.env.VITE_LOCAL_API_BASE }/locations`
 
-export async function getLocations() {
-  return safeFetchJson(`${BASE_URL}/locations`);
-}
+export const getLocations = () => (BASE);
+export const getLocation = (id) => (`${BASE}/${id}`);
