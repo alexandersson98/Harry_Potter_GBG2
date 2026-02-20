@@ -1,6 +1,6 @@
 import { request } from "../httpClient"
 
-const BASE = "/api/beasts";
+const BASE = `${ import.meta.env.VITE_API_BASE }/beasts `;
 
 export const getBeasts = () =>
     request(BASE);
