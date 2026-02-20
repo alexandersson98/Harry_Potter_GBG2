@@ -1,5 +1,5 @@
 // src/services/api/locationsApi.js
-const BASE_URL = "http://localhost:3001"; // <-- utan /api
+const BASE_URL = "/api/locations"; 
 
 async function safeFetchJson(url) {
   try {

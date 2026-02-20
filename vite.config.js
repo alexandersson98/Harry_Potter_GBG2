@@ -7,10 +7,10 @@ export default defineConfig({
  base: "/Harry_Potter_GBG2/",
     server: {
         proxy: { 
-            "/api": {
-                target: "https://hp-api.onrender.com",
+            "/apit": {
+                target: "http://localhost:3001",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, "/api"),
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },
