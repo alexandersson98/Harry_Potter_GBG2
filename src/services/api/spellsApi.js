@@ -1,21 +1,6 @@
-const BASE_URL = "https://hp-api.onrender.com/api";
+import { request } from "../httpClient";
 
-async function safeFetchJson(url, options) {
-  try {
-    const res = await fetch(url, options);
+const BASE = `${ import.meta.env.VITE_API_BASE }/spells `;
 
-    if (!res.ok) {
-      // användarvänligt fel, utan teknisk jargong i UI
-      throw new Error("API_ERROR");
-    }
-
-    return await res.json();
-  } catch (err) {
-    // nätverksfel/offline/etc
-    throw new Error("NETWORK_ERROR");
-  }
-}
-
-export async function getSpells() {
-  return safeFetchJson(`${BASE_URL}/spells`);
-}
+export const getSpells = () => request(BASE);
+export const getSpell = (id) => request(`${BASE}/${id}`);
