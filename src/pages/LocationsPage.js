@@ -38,6 +38,7 @@ export function LocationsPage() {
 
       
     </main>  
+  `;
 }
 
 export async function mountLocationsPage() {
