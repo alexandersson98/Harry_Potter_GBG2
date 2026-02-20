@@ -7,13 +7,20 @@ export default defineConfig({
  base: "/Harry_Potter_GBG2/",
     server: {
         proxy: { 
-            "/apit": {
+            "/api": {
                 target: "http://localhost:3001",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      "/remote-api": {
+        target: "https://hp-api.onrender.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/remote-api/, "api"),
+      }
     },
   },
+
+
             
     plugins:[
         VitePWA({
