@@ -48,16 +48,6 @@ function wireBurgerMenu() {
 wireOfflineBanner();
 wireBurgerMenu();
 
-/* Service Worker (PWA) */
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      await navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`);
-    } catch {
-      // ska inte krascha om SW failar
-    }
-  });
-}
 
 function spawnMagicClick(x, y) {
   // main glow ring

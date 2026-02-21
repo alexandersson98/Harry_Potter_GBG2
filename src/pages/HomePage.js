@@ -10,7 +10,7 @@ mount:
 - Kopplar ihop data + UI.
 */
 
-import { getCharacters } from "../services/api.js";
+import { getCharacters } from "../services/api/characterApi.js";
 
 const FAV_KEY = "wizardpedia:favorites";
 
@@ -228,6 +228,9 @@ export async function mountHomePage() {
     }).join("");
   }
 
+     
+
+
   async function load() {
     gridEl.innerHTML = `<div class="meta">Loading...</div>`;
     statusEl.textContent = "";
@@ -241,9 +244,10 @@ export async function mountHomePage() {
 
       render(shown);
       statusEl.textContent = `Showing ${shown.length} main characters.`;
-    } catch {
+    } catch{
       gridEl.innerHTML = `<div class="meta">Could not load data right now.</div>`;
       statusEl.textContent = "If you are offline, cached data may still be available.";
+  
     }
   }
 

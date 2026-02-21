@@ -1,54 +1,241 @@
 {
-  "characters": [
+
+  "beasts": [
     {
       "id": 1,
-      "name": "Harry Potter",
-      "house": "Gryffindor",
-      "age": 17,
-      "favoriteSpell": "Expelliarmus",
-      "role": "Student",
-      "gender": "Male",
-      "favorite": false
+      "name": "Hungarian Horntail",
+      "category": "Dragon",
+      "type": "Fire-breathing",
+      "dangerLevel": 5,
+      "strengths": ["Extremely aggressive", "Fire breath", "Armored scales"],
+      "habitat": "Mountains",
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/hungarian_horntail.png"
     },
     {
       "id": 2,
-      "name": "Hermione Granger",
-      "house": "Gryffindor",
-      "age": 17,
-      "favoriteSpell": "Alohomora",
-      "role": "Student",
-      "gender": "Female",
-      "favorite": false
+      "name": "Ukrainian Ironbelly",
+      "category": "Dragon",
+      "type": "Fire-breathing",
+      "dangerLevel": 5,
+      "strengths": ["Massive size", "Crushing strength", "Thick scales"],
+      "habitat": "Eastern Europe",
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/ukrainian_ironbelly.png"
     },
     {
       "id": 3,
-      "name": "Ron Weasley",
-      "house": "Gryffindor",
-      "age": 17,
-      "favoriteSpell": "Wingardium Leviosa",
-      "role": "Student",
-      "gender": "Male",
-      "favorite": false
+      "name": "Basilisk",
+      "category": "Serpent",
+      "type": "Dark Creature",
+      "dangerLevel": 5,
+      "strengths": ["Kills with eye contact", "Deadly venom", "Gigantic size"],
+      "habitat": "Hidden chambers",
+      "alignment": "Dark",
+      "image": "/Harry_Potter_GBG2/images/beasts/basilisk.png"
     },
     {
       "id": 4,
-      "name": "Draco Malfoy",
-      "house": "Slytherin",
-      "age": 17,
-      "favoriteSpell": "Serpensortia",
-      "role": "Student",
-      "gender": "Male",
-      "favorite": false
+      "name": "Werewolf",
+      "category": "Humanoid Beast",
+      "type": "Cursed",
+      "dangerLevel": 4,
+      "strengths": ["Enhanced strength", "Regeneration", "Savage instincts"],
+      "habitat": "Forests",
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/werewolf.png"
     },
     {
       "id": 5,
-      "name": "Albus Dumbledore",
-      "house": "Gryffindor",
-      "age": 115,
-      "favoriteSpell": "Fawkes Summoning",
-      "role": "Headmaster",
-      "gender": "Male",
-      "favorite": false
+      "name": "Acromantula",
+      "category": "Spider",
+      "type": "Giant Arachnid",
+      "dangerLevel": 4,
+      "strengths": ["Venomous bite", "Intelligent", "Lives in colonies"],
+      "habitat": "Forbidden Forest",
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/acromantula.png"
+    },
+    {
+      "id": 6,
+      "name": "Dementor",
+      "category": "Spirit",
+      "type": "Dark Entity",
+      "dangerLevel": 5,
+      "strengths": ["Drains happiness", "Dementor's Kiss", "Cannot be killed normally"],
+      "habitat": "Azkaban",
+      "alignment": "Dark",
+      "image": "/Harry_Potter_GBG2/images/beasts/dementor.png"
+    },
+    {
+      "id": 7,
+      "name": "Hippogriff",
+      "category": "Hybrid",
+      "type": "Proud Creature",
+      "dangerLevel": 3,
+      "strengths": ["Flight", "Sharp talons", "Highly intelligent"],
+      "habitat": "Mountains and open fields",
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/hippogriff.png"
+    },
+    {
+      "id": 8,
+      "name": "Thestral",
+      "category": "Winged Beast",
+      "type": "Death-related",
+      "dangerLevel": 2,
+      "strengths": ["Invisibility to most people", "Flight", "Loyal"],
+      "habitat": "Hogwarts grounds",
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/thestral.png"
+    },
+    {
+      "id": 9,
+      "name": "Phoenix",
+      "category": "Mythical Bird",
+      "type": "Rebirth",
+      "dangerLevel": 2,
+      "strengths": ["Healing tears", "Rebirth from ashes", "Teleportation"],
+      "habitat": "Rare / bonded to wizard",
+      "alignment": "Light",
+      "image": "/Harry_Potter_GBG2/images/beasts/phoenix.png"
+    },
+    {
+      "id": 10,
+      "name": "Unicorn",
+      "category": "Mythical Beast",
+      "type": "Pure Creature",
+      "dangerLevel": 1,
+      "strengths": ["Purity magic", "Powerful blood properties"],
+      "habitat": "Forests",
+      "alignment": "Light",
+      "image": "/Harry_Potter_GBG2/images/beasts/unicorn.png"
+    },
+    {
+      "id": 11,
+      "name": "Bowtruckle",
+      "category": "Tree Guardian",
+      "type": "Small Creature",
+      "dangerLevel": 1,
+      "strengths": ["Camouflage", "Tree protection"],
+      "habitat": "Forests",
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/bowtruckle.png"
+    },
+    {
+      "id": 12,
+      "name": "Obscurus",
+      "category": "Dark Force",
+      "type": "Parasitic Magic",
+      "dangerLevel": 5,
+      "strengths": ["Explosive destructive power", "Unstable magic"],
+      "habitat": "Inside suppressed young wizard",
+      "alignment": "Dark",
+      "image": "/Harry_Potter_GBG2/images/beasts/obscurus.png"
+    },
+    {
+      "id": 13,
+      "name": "Grindylow",
+      "category": "Water Demon",
+      "type": "Aquatic",
+      "dangerLevel": 2,
+      "strengths": ["Sharp claws", "Water ambush"],
+      "habitat": "Lakes",
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/grindylow.png"
+    }
+  ],
+  
+  "locations": [
+    {
+      "id": 1,
+      "name": "Hogwarts Castle",
+      "type": "School",
+      "description": "The famous school of witchcraft and wizardry.",
+      "characters": ["Harry Potter", "Hermione Granger", "Albus Dumbledore"],
+      "beasts": ["Hippogriff", "Basilisk"],
+      "spells": ["Expelliarmus", "Lumos"]
+    },
+    {
+      "id": 2,
+      "name": "Diagon Alley",
+      "type": "Marketplace",
+      "description": "A hidden wizarding shopping street in London.",
+      "characters": ["Harry Potter", "Hagrid"],
+      "beasts": [],
+      "spells": ["Alohomora"]
+    },
+    {
+      "id": 3,
+      "name": "Forbidden Forest",
+      "type": "Forest",
+      "description": "A dark and dangerous forest near Hogwarts.",
+      "characters": ["Hagrid"],
+      "beasts": ["Centaur", "Acromantula"],
+      "spells": []
+    },
+    {
+      "id": 4,
+      "name": "Azkaban",
+      "type": "Prison",
+      "description": "Wizarding prison guarded by Dementors.",
+      "characters": ["Sirius Black"],
+      "beasts": ["Dementor"],
+      "spells": []
+    },
+    {
+      "id": 5,
+      "name": "Hogsmeade",
+      "type": "Village",
+      "description": "A wizard-only village near Hogwarts.",
+      "characters": ["Harry Potter"],
+      "beasts": [],
+      "spells": []
+    },
+    {
+      "id": 6,
+      "name": "Ministry of Magic",
+      "type": "Government",
+      "description": "Headquarters of magical law and order.",
+      "characters": ["Cornelius Fudge"],
+      "beasts": [],
+      "spells": []
+    },
+    {
+      "id": 7,
+      "name": "Malfoy Manor",
+      "type": "Mansion",
+      "description": "Home of the Malfoy family.",
+      "characters": ["Draco Malfoy", "Lucius Malfoy"],
+      "beasts": [],
+      "spells": []
+    },
+    {
+      "id": 8,
+      "name": "Godric's Hollow",
+      "type": "Village",
+      "description": "Birthplace of Harry Potter.",
+      "characters": ["Harry Potter"],
+      "beasts": [],
+      "spells": []
+    },
+    {
+      "id": 9,
+      "name": "Chamber of Secrets",
+      "type": "Hidden Chamber",
+      "description": "Ancient chamber beneath Hogwarts.",
+      "characters": ["Tom Riddle"],
+      "beasts": ["Basilisk"],
+      "spells": []
+    },
+    {
+      "id": 10,
+      "name": "Room of Requirement",
+      "type": "Magical Room",
+      "description": "A room that appears when needed.",
+      "characters": ["Harry Potter"],
+      "beasts": [],
+      "spells": ["Protego"]
     }
   ]
 }

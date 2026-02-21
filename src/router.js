@@ -1,6 +1,10 @@
 
 import { HomePage, mountHomePage } from "./pages/HomePage.js";
 import { Nav } from "./components/Nav.js";
+import { SpellsPage, mountSpellsPage } from "./pages/SpellsPage.js";
+import { beastPage, mountBeastPage } from  "./pages/beastspage.js";
+import { LocationsPage, mountLocationsPage } from "./pages/LocationsPage.js";
+
 
 export function createRouter(outletSelector) {
   const outlet = document.querySelector(outletSelector);
@@ -15,6 +19,25 @@ export function createRouter(outletSelector) {
       mount: mountHomePage,
       showNav: true,
     },
+
+    "/spells": {
+      view: SpellsPage,
+      mount: mountSpellsPage,
+      showNav: true,
+    },
+
+    "/beasts": {
+      view: beastPage,
+      mount: mountBeastPage,
+      showNav: true,
+    },
+    
+    "/locations": {
+      view: LocationsPage,
+      mount: mountLocationsPage,
+      showNav: true,
+    },
+
 
     notFound: {
       view: () => `<h1>404</h1><p>Sidan finns inte.</p>`,

@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
-const BASE_URL = "https://hp-api.onrender.com/api";
+
 
 export default defineConfig({
  base: "/Harry_Potter_GBG2/",
@@ -12,14 +12,23 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      "/remote-api": {
+        target: "https://hp-api.onrender.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/remote-api/, "/api"),
+      }
     },
   },
+
+
             
     plugins:[
         VitePWA({
             registerType: "autoUpdate",
+            devOptions: {enabled: true},
             includeAssets: ["HP-HP.png", "HP-logo.png"],
             manifest: {
+                id: "Harry_Potter_GBG2/",
                 name: "Wizardpedia",
                 short_name: "Wizardpedia",
                 description: "Wisardpedia PWA",
@@ -29,9 +38,9 @@ export default defineConfig({
                 start_url: "/Harry_Potter_GBG2/",
                 scope: "/Harry_Potter_GBG2/",
                 icons: [
-                    { src: "HP-logo.png", sizes: "192x192", type: "image/png" },
-                    { src: "HP-HP.png", sizes: "512x512", type: "image/png" },
-                    { src: "HP-HP.png", sizes: "512x512", type: "image/png", purpose: "maskable" }
+                    { src: "/Harry_Potter_GBG2/HP-logo.png", sizes: "192x192", type: "image/png" },
+                    { src: "/Harry_Potter_GBG2/HP-HP.png", sizes: "512x512", type: "image/png" },
+                    { src: "/Harry_Potter_GBG2/HP-HP.png", sizes: "512x512", type: "image/png", purpose: "maskable" }
                 ]
             },
             
@@ -41,12 +50,11 @@ export default defineConfig({
 
         runtimeCaching: [
             {
-            urlPattern: /^https:\/\/hp-api\.onrender\.com\/api\/.*/i,
-
+            urlPattern: ({ url }) => url.origin === "https://hp-api.onrender.com",
             handler: "NetworkFirst",
 
             options: {
-              cacheName: "api-cache",
+              cacheName: "hp-api-cache",
               expiration: {
                 maxEntries: 200,
                 maxAgeSeconds: 60 * 60 * 24, 
