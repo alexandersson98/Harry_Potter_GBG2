@@ -1,4 +1,4 @@
-import { beastList } from "../components/beastsList"
+import { beastList } from "../components/beastCard"
 import { getBeast } from "../services/api/beastsApi";
 import { getBeasts } from "../services/api/beastsApi";
 
@@ -90,7 +90,12 @@ export async function mountBeastPage(){
     const statusEl = document.getElementById("beastStatusText");
 
     function renderBeasts(gridEl, beasts){
-      gridEl.innerHTML = beasts.map(b => `<div class=meta>${ b.name }</div>`).join("");
+     gridEl.innerHTML = beasts.map(b => `
+      <div class="meta">
+      <img src="${b.image}" alt="${b.name}">
+      <div>${b.name}</div>
+      </div>
+      `).join("");
     }
 
     

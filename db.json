@@ -9,7 +9,8 @@
       "dangerLevel": 5,
       "strengths": ["Extremely aggressive", "Fire breath", "Armored scales"],
       "habitat": "Mountains",
-      "alignment": "Neutral"
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/hungarian_horntail.png"
     },
     {
       "id": 2,
@@ -19,7 +20,8 @@
       "dangerLevel": 5,
       "strengths": ["Massive size", "Crushing strength", "Thick scales"],
       "habitat": "Eastern Europe",
-      "alignment": "Neutral"
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/ukrainian_ironbelly.png"
     },
     {
       "id": 3,
@@ -29,7 +31,8 @@
       "dangerLevel": 5,
       "strengths": ["Kills with eye contact", "Deadly venom", "Gigantic size"],
       "habitat": "Hidden chambers",
-      "alignment": "Dark"
+      "alignment": "Dark",
+      "image": "/Harry_Potter_GBG2/images/beasts/basilisk.png"
     },
     {
       "id": 4,
@@ -39,7 +42,8 @@
       "dangerLevel": 4,
       "strengths": ["Enhanced strength", "Regeneration", "Savage instincts"],
       "habitat": "Forests",
-      "alignment": "Neutral"
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/werewolf.png"
     },
     {
       "id": 5,
@@ -49,7 +53,8 @@
       "dangerLevel": 4,
       "strengths": ["Venomous bite", "Intelligent", "Lives in colonies"],
       "habitat": "Forbidden Forest",
-      "alignment": "Neutral"
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/acromantula.png"
     },
     {
       "id": 6,
@@ -59,7 +64,8 @@
       "dangerLevel": 5,
       "strengths": ["Drains happiness", "Dementor's Kiss", "Cannot be killed normally"],
       "habitat": "Azkaban",
-      "alignment": "Dark"
+      "alignment": "Dark",
+      "image": "/Harry_Potter_GBG2/images/beasts/dementor.png"
     },
     {
       "id": 7,
@@ -69,7 +75,8 @@
       "dangerLevel": 3,
       "strengths": ["Flight", "Sharp talons", "Highly intelligent"],
       "habitat": "Mountains and open fields",
-      "alignment": "Neutral"
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/hippogriff.png"
     },
     {
       "id": 8,
@@ -79,7 +86,8 @@
       "dangerLevel": 2,
       "strengths": ["Invisibility to most people", "Flight", "Loyal"],
       "habitat": "Hogwarts grounds",
-      "alignment": "Neutral"
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/thestral.png"
     },
     {
       "id": 9,
@@ -89,7 +97,8 @@
       "dangerLevel": 2,
       "strengths": ["Healing tears", "Rebirth from ashes", "Teleportation"],
       "habitat": "Rare / bonded to wizard",
-      "alignment": "Light"
+      "alignment": "Light",
+      "image": "/Harry_Potter_GBG2/images/beasts/phoenix.png"
     },
     {
       "id": 10,
@@ -99,47 +108,41 @@
       "dangerLevel": 1,
       "strengths": ["Purity magic", "Powerful blood properties"],
       "habitat": "Forests",
-      "alignment": "Light"
+      "alignment": "Light",
+      "image": "/Harry_Potter_GBG2/images/beasts/unicorn.png"
     },
     {
       "id": 11,
-      "name": "Niffler",
-      "category": "Treasure Hunter",
-      "type": "Small Beast",
-      "dangerLevel": 1,
-      "strengths": ["Attracted to shiny objects", "Burrowing ability"],
-      "habitat": "Underground",
-      "alignment": "Neutral"
-    },
-    {
-      "id": 12,
       "name": "Bowtruckle",
       "category": "Tree Guardian",
       "type": "Small Creature",
       "dangerLevel": 1,
       "strengths": ["Camouflage", "Tree protection"],
       "habitat": "Forests",
-      "alignment": "Neutral"
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/bowtruckle.png"
     },
     {
-      "id": 13,
+      "id": 12,
       "name": "Obscurus",
       "category": "Dark Force",
       "type": "Parasitic Magic",
       "dangerLevel": 5,
       "strengths": ["Explosive destructive power", "Unstable magic"],
       "habitat": "Inside suppressed young wizard",
-      "alignment": "Dark"
+      "alignment": "Dark",
+      "image": "/Harry_Potter_GBG2/images/beasts/obscurus.png"
     },
     {
-      "id": 14,
+      "id": 13,
       "name": "Grindylow",
       "category": "Water Demon",
       "type": "Aquatic",
       "dangerLevel": 2,
       "strengths": ["Sharp claws", "Water ambush"],
       "habitat": "Lakes",
-      "alignment": "Neutral"
+      "alignment": "Neutral",
+      "image": "/Harry_Potter_GBG2/images/beasts/grindylow.png"
     }
   ],
   
