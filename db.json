@@ -152,6 +152,7 @@
       "name": "Hogwarts Castle",
       "type": "School",
       "description": "The famous school of witchcraft and wizardry.",
+      "image": "/Harry_Potter_GBG2/images/locations/Hogwarts_castle.jpg",
       "characters": ["Harry Potter", "Hermione Granger", "Albus Dumbledore"],
       "beasts": ["Hippogriff", "Basilisk"],
       "spells": ["Expelliarmus", "Lumos"]
@@ -161,6 +162,7 @@
       "name": "Diagon Alley",
       "type": "Marketplace",
       "description": "A hidden wizarding shopping street in London.",
+      "image": "/Harry_Potter_GBG2/images/locations/Diagon_Alley_North_Side.webp",
       "characters": ["Harry Potter", "Hagrid"],
       "beasts": [],
       "spells": ["Alohomora"]
@@ -170,6 +172,7 @@
       "name": "Forbidden Forest",
       "type": "Forest",
       "description": "A dark and dangerous forest near Hogwarts.",
+      "image": "/Harry_Potter_GBG2/images/locations/Forbidden-Forest.webp",
       "characters": ["Hagrid"],
       "beasts": ["Centaur", "Acromantula"],
       "spells": []
@@ -179,6 +182,7 @@
       "name": "Azkaban",
       "type": "Prison",
       "description": "Wizarding prison guarded by Dementors.",
+      "image": "/Harry_Potter_GBG2/images/locations/Azkaban.webp",
       "characters": ["Sirius Black"],
       "beasts": ["Dementor"],
       "spells": []
@@ -188,6 +192,7 @@
       "name": "Hogsmeade",
       "type": "Village",
       "description": "A wizard-only village near Hogwarts.",
+      "image": "/Harry_Potter_GBG2/images/locations/hogsmeade.webp",
       "characters": ["Harry Potter"],
       "beasts": [],
       "spells": []
@@ -197,6 +202,7 @@
       "name": "Ministry of Magic",
       "type": "Government",
       "description": "Headquarters of magical law and order.",
+      "image": "/Harry_Potter_GBG2/images/locations/MinistryofMagic.webp",
       "characters": ["Cornelius Fudge"],
       "beasts": [],
       "spells": []
@@ -206,6 +212,7 @@
       "name": "Malfoy Manor",
       "type": "Mansion",
       "description": "Home of the Malfoy family.",
+      "image": "/Harry_Potter_GBG2/images/locations/Malfoy.webp",
       "characters": ["Draco Malfoy", "Lucius Malfoy"],
       "beasts": [],
       "spells": []
@@ -215,6 +222,7 @@
       "name": "Godric's Hollow",
       "type": "Village",
       "description": "Birthplace of Harry Potter.",
+      "image": "/Harry_Potter_GBG2/images/locations/godrics.webp",
       "characters": ["Harry Potter"],
       "beasts": [],
       "spells": []
@@ -224,6 +232,7 @@
       "name": "Chamber of Secrets",
       "type": "Hidden Chamber",
       "description": "Ancient chamber beneath Hogwarts.",
+      "image": "/Harry_Potter_GBG2/images/locations/Chamber.webp",
       "characters": ["Tom Riddle"],
       "beasts": ["Basilisk"],
       "spells": []
@@ -233,6 +242,7 @@
       "name": "Room of Requirement",
       "type": "Magical Room",
       "description": "A room that appears when needed.",
+      "image": "/Harry_Potter_GBG2/images/locations/room.webp",
       "characters": ["Harry Potter"],
       "beasts": [],
       "spells": ["Protego"]
