@@ -306,10 +306,11 @@ a:hover{
   margin: 0;
   font-weight: 1000;
   letter-spacing: 1px;
-  font-size: clamp(38px, 4.2vw, 56px);
+  font-size: clamp(34px, 3.8vw, 50px);
   line-height: 1.0;
   color: rgba(255,255,255,.95);
   text-shadow: 0 2px 12px rgba(0,0,0,.45);
+  overflow-wrap: anywhere;
 }
 
 .lead{
@@ -755,16 +756,3 @@ button:active{
   border-bottom: 2px solid rgba(214,179,91,.22);
 }
 
-/* Force same hero image behavior on ALL pages */
-.hero .media{
-  padding: 0 !important;
-  display: block !important;
-}
-
-.hero .media img{
-  width: 100% !important;
-  height: 240px !important;
-  object-fit: cover !important;
-  max-width: none !important;
-  aspect-ratio: auto !important;
-}
