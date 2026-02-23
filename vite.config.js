@@ -4,6 +4,10 @@ import { VitePWA } from "vite-plugin-pwa";
 
 
 export default defineConfig({
+  build: {
+     outDir: "dist"
+     },
+
  base: "/Harry_Potter_GBG2/",
     server: {
         proxy: { 
