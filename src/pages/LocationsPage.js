@@ -62,6 +62,19 @@ export function LocationsPage() {
                 <a href="#/beasts">Beasts</a>
               </div>
             </section>
+
+            <section class="side-card" aria-label="Favorites (offline)">
+              <h2 class="side-title">Favorites</h2>
+              <div style="padding:12px">
+                <p class="meta" style="margin-top:0">
+                  Favorites are saved locally and work offline.
+                </p>
+                <a class="browse-btn-like" href="#/favorites"
+                  style="display:block;text-align:center;border:2px solid rgba(255,255,255,.18);padding:12px;font-weight:900;text-decoration:none;color:rgba(255,255,255,.92);background:rgba(0,0,0,.18);border-radius:14px;">
+                  Open favorites
+                </a>
+              </div>
+            </section>
           </aside>
 
         </div>
