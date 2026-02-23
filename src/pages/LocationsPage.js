@@ -21,7 +21,7 @@ export function LocationsPage() {
 
               <div class="media" aria-label="Featured image">
                 <img
-                  src="HP-HP.png"
+                  src="locations.png"
                   alt="Magical location from the wizarding world"
                   loading="lazy"
                 />
