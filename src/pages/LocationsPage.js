@@ -44,9 +44,13 @@ export function LocationsPage() {
           </article>
 
           <aside class="sidebar" aria-label="Sidebar">
-            <section class="side-card" aria-label="About us">
-              <h2 class="side-title">About us</h2>
-              <div class="aboutbox"></div>
+            <section class="side-card" aria-label="Tips">
+              <h2 class="side-title">Tip</h2>
+              <div style="padding:12px">
+                <p class="meta" style="margin-top:0">
+                  Use the search bar to quickly find locations like “Hogwarts Castle” or “Diagon Alley”.
+                </p>
+              </div>
             </section>
 
             <section aria-label="Browse">

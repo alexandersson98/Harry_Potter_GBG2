@@ -44,9 +44,17 @@ body{
   color:var(--text);
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
   line-height:1.5;
+  background: var(--bg-ink);
+}
 
-  /* Global background image (root /images folder) */
-  background: var(--bg-ink) url("/images/hpbackground.png") center/cover no-repeat fixed;
+/* Fixed, consistent background on ALL pages */
+body::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  z-index: -2;             /* behind everything */
+  background: url("/images/hpbackground.png") center / cover no-repeat;
+  transform: translateZ(0); /* helps rendering on some GPUs */
 }
 
 /* Dark overlay + subtle “magic” highlight for readability */
