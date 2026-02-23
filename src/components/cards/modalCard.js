@@ -1,25 +1,19 @@
-export function mountModal(prefix, data) {
-  document.getElementById(`${prefix}ModalTitle`).textContent = data.name ?? "—";
-  document.getElementById(`${prefix}ModalSub`).textContent = data.subtitle ?? "";
-
-  const img = document.getElementById(`${prefix}ModalImg`);
-  if (data.image) {
-    img.src = data.image;
-    img.alt = data.name ?? "";
-    img.hidden = false;
-  } else {
-    img.hidden = true;
-  }
-
-  // Renderar info-fält från mappern
-  const infoEl = document.getElementById(`${prefix}ModalInfo`);
-  infoEl.innerHTML = (data.fields ?? [])
-    .filter(f => f.value)
-    .map(f => `
-      <div class="modal-field">
-        <span class="modal-field-label">${f.label}</span>
-        <span class="modal-field-value">${f.value}</span>
+export function modalCard(prefix) {
+  return `
+    <div class="modal-backdrop" id="${prefix}ModalBackdrop" hidden></div>
+    <div class="modal" id="${prefix}Modal" role="dialog" aria-modal="true" aria-labelledby="${prefix}ModalTitle" hidden>
+      <button class="modal-close" id="${prefix}ModalClose" type="button" aria-label="Close">×</button>
+      <div class="modal-head">
+        <h2 id="${prefix}ModalTitle" class="modal-title">Title</h2>
+        <p id="${prefix}ModalSub" class="modal-sub"></p>
       </div>
-    `)
-    .join("");
+      <div class="modal-body">
+        <div class="modal-left">
+          <img id="${prefix}ModalImg" class="modal-img" alt="" />
+          <button id="${prefix}ModalFav" class="modal-fav" type="button" aria-pressed="false">☆ Favorite</button>
+        </div>
+        <div class="modal-right" id="${prefix}ModalInfo"></div>
+      </div>
+    </div>
+  `;
 }
