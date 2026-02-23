@@ -1,5 +1,5 @@
 import { cardTile } from "./cardTile";
 
-export function cardGrid ({ items}){
+export function cardGrid ({ items }){
     return items.map(cardTile).join("");
 }
