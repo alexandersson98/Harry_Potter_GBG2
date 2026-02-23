@@ -743,4 +743,28 @@ button:active{
   0%   { transform: translate(-50%, -50%) translate(0,0) scale(1); opacity: 1; }
   100% { transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
 }
+/* HomePage wiki headings (do not affect sidebar) */
+.home-h2{
+  margin: 18px 0 10px;
+  font-size: 22px;
+  font-weight: 1000;
+  letter-spacing: .5px;
+  color: rgba(255,255,255,.92);
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(214,179,91,.22);
+}
 
+/* Force same hero image behavior on ALL pages */
+.hero .media{
+  padding: 0 !important;
+  display: block !important;
+}
+
+.hero .media img{
+  width: 100% !important;
+  height: 240px !important;
+  object-fit: cover !important;
+  max-width: none !important;
+  aspect-ratio: auto !important;
+}

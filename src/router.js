@@ -4,6 +4,8 @@ import { Nav } from "./components/Nav.js";
 import { SpellsPage, mountSpellsPage } from "./pages/SpellsPage.js";
 import { beastPage, mountBeastPage } from  "./pages/beastspage.js";
 import { LocationsPage, mountLocationsPage } from "./pages/LocationsPage.js";
+import { FavoritesPage, mountFavoritesPage } from "./pages/FavoritesPage.js";
+import { CharactersPage, mountCharactersPage } from "./pages/CharactersPage.js";
 
 
 export function createRouter(outletSelector) {
@@ -35,6 +37,18 @@ export function createRouter(outletSelector) {
     "/locations": {
       view: LocationsPage,
       mount: mountLocationsPage,
+      showNav: true,
+    },
+    
+    "/favorites": {
+      view: FavoritesPage,
+      mount: mountFavoritesPage,
+      showNav: true,
+    },
+
+    "/characters": {
+      view: CharactersPage,
+      mount: mountCharactersPage,
       showNav: true,
     },
 
