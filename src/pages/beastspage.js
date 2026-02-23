@@ -1,6 +1,10 @@
+import { mapApiToListCard } from "../adapters/mappers/beastMapper";
 import { beastList } from "../components/beastCard"
+import { cardGrid } from "../components/cards/cardGrid";
 import { getBeast } from "../services/api/beastsApi";
 import { getBeasts } from "../services/api/beastsApi";
+import { getFavorites } from "../services/storage/favorites";
+
 
 export function beastPage(){
     return `
@@ -88,35 +92,29 @@ export async function mountBeastPage(){
 
     const gridEl = document.getElementById("beastGrid");
     const statusEl = document.getElementById("beastStatusText");
-
-    function renderBeasts(gridEl, beasts){
-     gridEl.innerHTML = beasts.map(b => `
-      <div class="meta">
-      <img src="${b.image}" alt="${b.name}">
-      <div>${b.name}</div>
-      </div>
-      `).join("");
-    }
-
     
-       
     async function load() {
     gridEl.innerHTML = `<div class="meta">Loading...</div>`;
     statusEl.textContent = "";
 
     try {
     const data = await getBeasts();
-    const arr = Array.isArray(data) ? data : data?.results ?? [];
+    const rawArr = Array.isArray(data) ? data : data?.results ?? [];
 
-    renderBeasts(gridEl, arr);
-    statusEl.textContent = `showing ${arr.length} beasts`;
+    const favSet = new Set(getFavorites().map((f) => String(f.id)));
+
+    const cardItems = rawArr.map((raw) => {
+    const vm = mapApiToListCard(raw); 
+    return { ...vm, isFavorite: favSet.has(String(vm.id)) };
+    });
+
+    gridEl.innerHTML = cardGrid({ items: cardItems });
+    statusEl.textContent = `showing ${cardItems.length} beasts`;
   } catch (e) {
-    gridEl.innerHTML = `<div class="meta">Could not load data right now</div>`;
-    statusEl.textContent = "If you are offline, cached data may still be available.";
-    console.error(e);
+     gridEl.innerHTML = `<div class="meta">Could not load data right now</div>`;
+      statusEl.textContent = "If you are offline, cached data may still be available.";
+      console.error(e);
+    }
   }
+  load();
 }
-    load();
-  }
-
-
