@@ -1,4 +1,4 @@
-import { mapApiToListCard } from "../adapters/mappers/beastMapper";
+import { mapApiToListCard } from "../adapters/mappers/mapApiToListCard";
 import { beastList } from "../components/beastCard"
 import { cardGrid } from "../components/cards/cardGrid";
 import { getBeast } from "../services/api/beastsApi";
