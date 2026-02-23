@@ -26,7 +26,7 @@ export function beastPage(){
 
           <div class="media" aria-label="Featured beast image">
             <img
-              src="HP-HP.png"
+              src="beasts.png"
               alt="Magical creature from the Wizarding World"
               loading="lazy"
             />
