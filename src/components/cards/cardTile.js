@@ -7,7 +7,7 @@ export function cardTile({ id, name, image, isFavorite }) {
             ? `<img src="${image}" alt="${name}" loading="lazy" />`
             : `<div class="char-fallback" aria-hidden="true">✨</div>`
         }
-        <button class="fav-btn" type="button" aria-label="Toggle favorite" data-fav-id="${encodeURIComponent(
+        <button class="fav-overlay" type="button" aria-label="Toggle favorite" data-fav-id="${encodeURIComponent(
           String(id)
         )}">
           ${isFavorite ? "★" : "☆"}

@@ -1,3 +1,32 @@
+import { syncFavButton } from "./favoritesController";
+
+export function mountModal(prefix, data) {
+  document.getElementById(`${prefix}ModalTitle`).textContent = data.name ?? "—";
+  document.getElementById(`${prefix}ModalSub`).textContent = data.subtitle ?? "";
+
+  const img = document.getElementById(`${prefix}ModalImg`);
+  if (data.image) {
+    img.src = data.image;
+    img.alt = data.name ?? "";
+    img.hidden = false;
+  } else {
+    img.hidden = true;
+  }
+
+  const infoEl = document.getElementById(`${prefix}ModalInfo`);
+  infoEl.innerHTML = (data.fields ?? [])
+    .filter(f => f.value)
+    .map(f => `
+      <div class="modal-field">
+        <span class="modal-field-label">${f.label}</span>
+        <span class="modal-field-value">${f.value}</span>
+      </div>
+    `)
+    .join("");
+      const favBtn = document.getElementById(`${prefix}ModalFav`);
+  if (favBtn) syncFavButton(favBtn, data.id);
+}
+
 export function createModalController({ backdropId, modalId, closeId }) {
   const backdrop = document.getElementById(backdropId);
   const modal = document.getElementById(modalId);
@@ -30,6 +59,9 @@ export function createModalController({ backdropId, modalId, closeId }) {
     document.body.style.overflow = "hidden";
     btnClose.focus();
   }
+
+
+  
 
 
   function close() {
