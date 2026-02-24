@@ -1,4 +1,4 @@
-import { syncFavButton } from "./favoritesController";
+import { syncFavButton, handleFavBtnClick } from "./favoritesController";
 
 export function mountModal(prefix, data) {
   document.getElementById(`${prefix}ModalTitle`).textContent = data.name ?? "—";
@@ -25,6 +25,11 @@ export function mountModal(prefix, data) {
     .join("");
       const favBtn = document.getElementById(`${prefix}ModalFav`);
   if (favBtn) syncFavButton(favBtn, data.id);
+    favBtn.onclick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleFavBtnClick(data, favBtn);
+  };
 }
 
 export function createModalController({ backdropId, modalId, closeId }) {

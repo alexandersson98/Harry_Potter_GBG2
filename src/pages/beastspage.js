@@ -132,10 +132,14 @@ export async function mountBeastPage(){
   const favEl = e.target.closest("[data-fav-id]");
 
 if (favEl) {
+    e.preventDefault();
+  e.stopPropagation();
   const id = decodeURIComponent(favEl.dataset.favId);
   const raw = rawArr.find(x => String(x.id) === id);
+  if (!raw) return; 
   const mapped = mapApiToListCard(raw);
   toggleFavInGrid(id, mapped, favEl);
+   return; 
 }
 
   if (openEl) {
