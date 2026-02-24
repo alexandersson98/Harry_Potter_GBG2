@@ -2,17 +2,18 @@
 - unikt html skelett för varje sida.
 - Definierar sidans struktur (layout placeholders).
 - Hanterar mount-logik och dataflöde.
-- hämta in återanvändbara delar från components via placeholders.
-
-mount:
-- Hämtar data baserat på route-parametrar.
-- Stoppar in renderad HTML i rätt placeholders.
-- Kopplar ihop data + UI.
+- Hämtar in återanvändbara delar från components via placeholders.
 */
 
 import { getCharacters } from "../services/api/characterApi.js";
+import {
+  mapCharacterToListCard,
+  mapCharacterToDetails,
+} from "../adapters/mappers/characterMapper.js";
+import { cardGrid } from "../components/cards/cardGrid.js";
+import { getFavorites, toggleFavorite } from "../services/storage/favorites.js";
 
-const FAV_KEY = "wizardpedia:favorites";
+const TYPE = "character";
 
 /** Bara huvudkaraktärer (matcha exakt namn från API) */
 const MAIN_CHARACTERS = new Set([
@@ -28,53 +29,31 @@ const MAIN_CHARACTERS = new Set([
   "Severus Snape",
 ]);
 
-function loadFavs() {
+function rawId(raw) {
+  return String(raw?.id ?? raw?._id ?? raw?.name ?? "");
+}
+
+function decodeId(x) {
   try {
-    return JSON.parse(localStorage.getItem(FAV_KEY)) ?? [];
+    return decodeURIComponent(String(x ?? ""));
   } catch {
-    return [];
+    return String(x ?? "");
   }
 }
-function saveFavs(favs) {
-  localStorage.setItem(FAV_KEY, JSON.stringify(favs));
-}
-function isFav(favs, id) {
-  return favs.some((x) => x.id === id);
-}
 
-/** Normalisera data från API till “våra” fält */
-function mapApiToCard(c) {
-  const id = c.id ?? c._id ?? c.name;
-
-  const born = c.dateOfBirth || "—";
-  const bloodStatus = c.ancestry ? c.ancestry : "—";
-
-  return {
-    id,
-    name: c.name ?? "Unknown",
-    house: c.house || "—",
-    species: c.species || "—",
-    actor: c.actor || "—",
-    patronus: c.patronus || "—",
-    image: c.image || "",
-    alive: typeof c.alive === "boolean" ? (c.alive ? "Yes" : "No") : "—",
-    ancestry: c.ancestry || "—",
-    wizard: typeof c.wizard === "boolean" ? (c.wizard ? "Yes" : "No") : "—",
-
-    // Wiki-liknande fält (hp-api saknar dessa)
-    born,
-    bloodStatus,
-    nationality: "—",
-    title: "—",
-    physical: "—",
-    relationships: "—",
-  };
+function buildFavKeySet() {
+  // Din favorites har shape: { type, id, ... }
+  return new Set(
+    getFavorites()
+      .filter((f) => String(f?.type) === TYPE)
+      .map((f) => String(f.id))
+  );
 }
 
 export function CharactersPage() {
   return `
     <main class="container">
-      <section class="frame" aria-label="Home">
+      <section class="frame" aria-label="Characters">
         <div class="grid">
 
           <article class="card main-card">
@@ -92,7 +71,7 @@ export function CharactersPage() {
               <div class="media" aria-label="Featured image">
                 <img
                   src="characters.png"
-                  alt="Castle-like view reminiscent of Hogwarts"
+                  alt="Featured characters"
                   loading="lazy"
                 />
               </div>
@@ -190,50 +169,21 @@ export async function mountCharactersPage() {
   const infoEl = document.getElementById("charModalInfo");
   const favBtn = document.getElementById("charModalFav");
 
-  let all = [];
-  let shown = [];
-  let favs = loadFavs();
-  let active = null;
+  let allRaw = [];
+  let shownRaw = [];
+  let activeRaw = null; // <- spara raw objektet (enklare än att leta via id)
   let lastFocus = null;
 
-  function render(items) {
-    if (!items.length) {
-      gridEl.innerHTML = `<div class="meta">No results.</div>`;
-      return;
-    }
+  function render(rawItems) {
+    const favSet = buildFavKeySet();
 
-    gridEl.innerHTML = items.map(raw => {
-      const c = mapApiToCard(raw);
-      const fav = isFav(favs, c.id);
+    const cards = rawItems.map((raw) => {
+      const id = rawId(raw);
+      return mapCharacterToListCard(raw, { isFavorite: favSet.has(id) });
+    });
 
-      return `
-  <div class="char-card" role="button" tabindex="0" data-open-id="${encodeURIComponent(String(c.id))}">
-    <div class="char-imgwrap">
-      ${c.image
-        ? `<img src="${c.image}" alt="${c.name}" loading="lazy" />`
-        : `<div class="char-fallback" aria-hidden="true">✨</div>`
-      }
-
-      <button
-        class="fav-overlay"
-        type="button"
-        data-fav-id="${String(c.id)}"
-        aria-label="Toggle favorite"
-        aria-pressed="${fav ? "true" : "false"}"
-        title="${fav ? "Remove favorite" : "Add favorite"}"
-      >${fav ? "★" : "☆"}</button>
-    </div>
-
-    <div class="char-name">${c.name}</div>
-  </div>
-`;
-
-
-    }).join("");
+    gridEl.innerHTML = cardGrid({ items: cards });
   }
-
-     
-
 
   async function load() {
     gridEl.innerHTML = `<div class="meta">Loading...</div>`;
@@ -243,36 +193,46 @@ export async function mountCharactersPage() {
       const data = await getCharacters();
       const arr = Array.isArray(data) ? data : data?.results ?? [];
 
-      all = arr.filter(x => MAIN_CHARACTERS.has(x.name));
-      shown = [...all];
+      allRaw = arr.filter((x) => MAIN_CHARACTERS.has(x?.name));
+      shownRaw = [...allRaw];
 
-      render(shown);
-      statusEl.textContent = `Showing ${shown.length} main characters.`;
-    } catch{
+      render(shownRaw);
+      statusEl.textContent = `Showing ${shownRaw.length} main characters.`;
+    } catch (e) {
       gridEl.innerHTML = `<div class="meta">Could not load data right now.</div>`;
-      statusEl.textContent = "If you are offline, cached data may still be available.";
-  
+      statusEl.textContent =
+        "If you are offline, cached data may still be available.";
+      console.error(e);
     }
   }
 
   function applyFilter() {
     const q = inputEl.value.trim().toLowerCase();
-    shown = all.filter(x => (x.name ?? "").toLowerCase().includes(q));
-    render(shown);
+    shownRaw = allRaw.filter((x) => (x?.name ?? "").toLowerCase().includes(q));
+    render(shownRaw);
   }
 
-  function openModalById(id) {
-    const raw = all.find(x => String(x.id ?? x._id ?? x.name) === String(id));
+  function openModal(raw) {
     if (!raw) return;
 
-    active = mapApiToCard(raw);
+    const favSet = buildFavKeySet();
+    const id = rawId(raw);
 
-    titleEl.textContent = active.name;
-    subEl.textContent = `House: ${active.house} · Patronus: ${active.patronus}`;
+    const details = mapCharacterToDetails(raw, {
+      isFavorite: favSet.has(id),
+    });
 
-    if (active.image) {
-      imgEl.src = active.image;
-      imgEl.alt = active.name;
+    // Viktigt: din favorites.js kräver type + id
+    details.type = TYPE;
+
+    activeRaw = raw;
+
+    titleEl.textContent = details.name;
+    subEl.textContent = `House: ${details.house} · Patronus: ${details.patronus}`;
+
+    if (details.image) {
+      imgEl.src = details.image;
+      imgEl.alt = details.name;
       imgEl.style.display = "block";
     } else {
       imgEl.style.display = "none";
@@ -280,20 +240,19 @@ export async function mountCharactersPage() {
 
     infoEl.innerHTML = `
       <div class="info-grid">
-        <div><span>Born</span><strong>${active.born}</strong></div>
-        <div><span>Blood status</span><strong>${active.bloodStatus}</strong></div>
-        <div><span>House</span><strong>${active.house}</strong></div>
-        <div><span>Patronus</span><strong>${active.patronus}</strong></div>
-        <div><span>Actor</span><strong>${active.actor}</strong></div>
-        <div><span>Wizard</span><strong>${active.wizard}</strong></div>
-        <div><span>Alive</span><strong>${active.alive}</strong></div>
-        <div><span>Species</span><strong>${active.species}</strong></div>
+        <div><span>Born</span><strong>${details.born}</strong></div>
+        <div><span>Blood status</span><strong>${details.bloodStatus}</strong></div>
+        <div><span>House</span><strong>${details.house}</strong></div>
+        <div><span>Patronus</span><strong>${details.patronus}</strong></div>
+        <div><span>Actor</span><strong>${details.actor}</strong></div>
+        <div><span>Wizard</span><strong>${details.wizard}</strong></div>
+        <div><span>Alive</span><strong>${details.alive}</strong></div>
+        <div><span>Species</span><strong>${details.species}</strong></div>
       </div>
     `;
 
-    const fav = isFav(favs, active.id);
-    favBtn.textContent = fav ? "★ Favorite" : "☆ Favorite";
-    favBtn.setAttribute("aria-pressed", fav ? "true" : "false");
+    favBtn.textContent = details.isFavorite ? "★ Favorite" : "☆ Favorite";
+    favBtn.setAttribute("aria-pressed", details.isFavorite ? "true" : "false");
 
     lastFocus = document.activeElement;
     backdrop.hidden = false;
@@ -309,32 +268,57 @@ export async function mountCharactersPage() {
     lastFocus?.focus?.();
   }
 
-  function toggleFavById(id) {
-    const raw = all.find(x => String(x.id ?? x._id ?? x.name) === String(id));
+  function toggleFavForRaw(raw) {
     if (!raw) return;
 
-    const mapped = mapApiToCard(raw);
-    const exists = isFav(favs, mapped.id);
+    const favSet = buildFavKeySet();
+    const id = rawId(raw);
 
-    favs = exists ? favs.filter(x => x.id !== mapped.id) : [...favs, mapped];
-    saveFavs(favs);
+    // Spara "details" som fav, så FavoritesPage kan visa mer info senare
+    const details = mapCharacterToDetails(raw, { isFavorite: favSet.has(id) });
+
+    // VIKTIGT: din favorites storage använder type:id som key
+    details.type = TYPE;
+
+    toggleFavorite(details);
   }
 
+  // --- Events ---
   gridEl.addEventListener("click", (e) => {
-    const favBtnEl = e.target.closest("[data-fav-id]");
-    if (favBtnEl) {
+    // Favorite toggle
+    const favEl = e.target.closest("[data-fav-id]");
+    if (favEl) {
       e.stopPropagation();
-      const id = favBtnEl.dataset.favId;
-      const pressed = favBtnEl.getAttribute("aria-pressed") === "true";
-      toggleFavById(id);
-      favBtnEl.setAttribute("aria-pressed", String(!pressed));
-      favBtnEl.textContent = !pressed ? "★" : "☆";
+      const id = decodeId(favEl.dataset.favId);
+      const raw = allRaw.find((x) => rawId(x) === id);
+      if (!raw) return;
+
+      toggleFavForRaw(raw);
+      render(shownRaw);
+
+      // (valfritt) uppdatera aria-pressed direkt om du vill:
+      // favEl.setAttribute("aria-pressed", buildFavKeySet().has(id) ? "true" : "false");
       return;
     }
 
+    // Open modal
     const openEl = e.target.closest("[data-open-id]");
     if (!openEl) return;
-    openModalById(decodeURIComponent(openEl.dataset.openId));
+
+    const id = decodeId(openEl.dataset.openId);
+    const raw = allRaw.find((x) => rawId(x) === id);
+    openModal(raw);
+  });
+
+  gridEl.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const openEl = e.target.closest("[data-open-id]");
+    if (!openEl) return;
+    e.preventDefault();
+
+    const id = decodeId(openEl.dataset.openId);
+    const raw = allRaw.find((x) => rawId(x) === id);
+    openModal(raw);
   });
 
   btnClose.addEventListener("click", closeModal);
@@ -344,12 +328,14 @@ export async function mountCharactersPage() {
   });
 
   favBtn.addEventListener("click", () => {
-    if (!active) return;
-    const exists = isFav(favs, active.id);
-    toggleFavById(active.id);
-    favBtn.textContent = exists ? "☆ Favorite" : "★ Favorite";
-    favBtn.setAttribute("aria-pressed", exists ? "false" : "true");
-    render(shown);
+    if (!activeRaw) return;
+
+    toggleFavForRaw(activeRaw);
+    render(shownRaw);
+
+    const nowFav = buildFavKeySet().has(rawId(activeRaw));
+    favBtn.textContent = nowFav ? "★ Favorite" : "☆ Favorite";
+    favBtn.setAttribute("aria-pressed", nowFav ? "true" : "false");
   });
 
   inputEl.addEventListener("input", applyFilter);
