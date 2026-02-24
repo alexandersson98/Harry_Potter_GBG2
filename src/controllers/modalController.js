@@ -14,15 +14,19 @@ export function mountModal(prefix, data) {
   }
 
   const infoEl = document.getElementById(`${prefix}ModalInfo`);
-  infoEl.innerHTML = (data.fields ?? [])
-    .filter(f => f.value)
-    .map(f => `
-      <div class="modal-field">
-        <span class="modal-field-label">${f.label}</span>
-        <span class="modal-field-value">${f.value}</span>
-      </div>
-    `)
-    .join("");
+  infoEl.innerHTML = `
+  <div class="info-grid">
+    ${(data.fields ?? [])
+      .filter(f => f.value)
+      .map(f => `
+        <div>
+          <span>${f.label}</span>
+          <strong>${f.value}</strong>
+        </div>
+      `)
+      .join("")}
+  </div>
+`;
       const favBtn = document.getElementById(`${prefix}ModalFav`);
   if (favBtn) syncFavButton(favBtn, data.id);
     favBtn.onclick = (e) => {
