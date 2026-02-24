@@ -1,3 +1,5 @@
+import { syncFavButton } from "./favoritesController";
+
 export function mountModal(prefix, data) {
   document.getElementById(`${prefix}ModalTitle`).textContent = data.name ?? "—";
   document.getElementById(`${prefix}ModalSub`).textContent = data.subtitle ?? "";
@@ -21,6 +23,8 @@ export function mountModal(prefix, data) {
       </div>
     `)
     .join("");
+      const favBtn = document.getElementById(`${prefix}ModalFav`);
+  if (favBtn) syncFavButton(favBtn, data.id);
 }
 
 export function createModalController({ backdropId, modalId, closeId }) {
