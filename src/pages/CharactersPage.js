@@ -4,7 +4,7 @@ import { cardGrid } from "../components/cards/cardGrid.js";
 import { modalCard } from "../components/cards/modalCard.js";
 import { getFavorites } from "../services/storage/favorites.js";
 import { createModalController, mountModal } from "../controllers/modalController.js";
-import { toggleFavInGrid } from "../controllers/favoritesController.js";
+import { toggleFavInGrid, syncFavButtonsIn } from "../controllers/favoritesController.js";
 
 const TYPE = "character";
 const MAIN_CHARACTERS = new Set([
@@ -79,7 +79,7 @@ export function CharactersPage() {
               <h2 class="side-title">Tip</h2>
               <div style="padding:12px">
                 <p class="meta" style="margin-top:0">
-                  Use the search bar to quickly find characters like “Harry Potter” or “Lord Voldemort”.
+                  Use the search bar to quickly find characters like "Harry Potter" or "Lord Voldemort".
                 </p>
               </div>
             </section>
@@ -173,11 +173,13 @@ export async function mountCharactersPage() {
 
   inputEl.addEventListener("input", applyFilter);
   reloadBtn.addEventListener("click", load);
+
   gridEl.addEventListener("click", (e) => {
     const openEl = e.target.closest("[data-open-id]");
     const favEl = e.target.closest("[data-fav-id]");
 
     if (favEl) {
+      e.preventDefault();
       e.stopPropagation();
       const id = decodeURIComponent(favEl.dataset.favId);
       const raw = rawArr.find((x) => rawId(x) === String(id));
@@ -197,8 +199,11 @@ export async function mountCharactersPage() {
       const detail = mapCharacterToDetails(raw);
       detail.type = TYPE;
 
-      mountModal("character", detail);
-      ctrl.open(detail);
+      ctrl.open(
+        detail,
+        () => mountModal("character", detail),
+        () => { syncFavButtonsIn(gridEl); }
+      );
     }
   });
 
@@ -215,7 +220,10 @@ export async function mountCharactersPage() {
     const detail = mapCharacterToDetails(raw);
     detail.type = TYPE;
 
-    mountModal("character", detail);
-    ctrl.open(detail);
+    ctrl.open(
+      detail,
+      () => mountModal("character", detail),
+      () => { syncFavButtonsIn(gridEl); }
+    );
   });
 }
