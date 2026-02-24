@@ -1,21 +1,12 @@
-/* Pages ansvar:
-- unikt html skelett för varje sida.
-- Definierar sidans struktur (layout placeholders).
-- Hanterar mount-logik och dataflöde.
-- Hämtar in återanvändbara delar från components via placeholders.
-*/
-
 import { getCharacters } from "../services/api/characterApi.js";
-import {
-  mapCharacterToListCard,
-  mapCharacterToDetails,
-} from "../adapters/mappers/characterMapper.js";
+import {mapCharacterToListCard, mapCharacterToDetails,} from "../adapters/mappers/characterMapper.js";
 import { cardGrid } from "../components/cards/cardGrid.js";
-import { getFavorites, toggleFavorite } from "../services/storage/favorites.js";
+import { modalCard } from "../components/cards/modalCard.js";
+import { getFavorites } from "../services/storage/favorites.js";
+import { createModalController, mountModal } from "../controllers/modalController.js";
+import { toggleFavInGrid } from "../controllers/favoritesController.js";
 
 const TYPE = "character";
-
-/** Bara huvudkaraktärer (matcha exakt namn från API) */
 const MAIN_CHARACTERS = new Set([
   "Harry Potter",
   "Hermione Granger",
@@ -33,16 +24,7 @@ function rawId(raw) {
   return String(raw?.id ?? raw?._id ?? raw?.name ?? "");
 }
 
-function decodeId(x) {
-  try {
-    return decodeURIComponent(String(x ?? ""));
-  } catch {
-    return String(x ?? "");
-  }
-}
-
-function buildFavKeySet() {
-  // Din favorites har shape: { type, id, ... }
+function favSetForType() {
   return new Set(
     getFavorites()
       .filter((f) => String(f?.type) === TYPE)
@@ -57,7 +39,7 @@ export function CharactersPage() {
         <div class="grid">
 
           <article class="card main-card">
-            <div class="hero" aria-label="Hero section">
+            <div class="hero" aria-label="Characters hero section">
               <div>
                 <p class="kicker">YOUR LEGACY IS WHAT YOU MAKE IT</p>
                 <h1 class="h1">LIVE THE UNWRITTEN</h1>
@@ -68,7 +50,7 @@ export function CharactersPage() {
                 </p>
               </div>
 
-              <div class="media" aria-label="Featured image">
+              <div class="media" aria-label="Featured character image">
                 <img
                   src="characters.png"
                   alt="Featured characters"
@@ -130,59 +112,34 @@ export function CharactersPage() {
       </section>
 
       <!-- MODAL (popup) -->
-      <div class="modal-backdrop" id="charModalBackdrop" hidden></div>
-
-      <div class="modal" id="charModal" role="dialog" aria-modal="true" aria-labelledby="charModalTitle" hidden>
-        <button class="modal-close" id="charModalClose" type="button" aria-label="Close">×</button>
-
-        <div class="modal-head">
-          <h2 id="charModalTitle" class="modal-title">Title</h2>
-          <p id="charModalSub" class="modal-sub">House · Species</p>
-        </div>
-
-        <div class="modal-body">
-          <div class="modal-left">
-            <img id="charModalImg" class="modal-img" alt="" />
-            <button id="charModalFav" class="modal-fav" type="button">☆ Favorite</button>
-          </div>
-
-          <div class="modal-right" id="charModalInfo"></div>
-        </div>
-      </div>
-
+      ${modalCard("character")}
     </main>
   `;
 }
 
 export async function mountCharactersPage() {
   const gridEl = document.getElementById("characterGrid");
+  const statusEl = document.getElementById("statusText");
   const inputEl = document.getElementById("searchInput");
   const reloadBtn = document.getElementById("reloadBtn");
-  const statusEl = document.getElementById("statusText");
+  const ctrl = createModalController({
+    backdropId: "characterModalBackdrop",
+    modalId: "characterModal",
+    closeId: "characterModalClose",
+  });
 
-  const modal = document.getElementById("charModal");
-  const backdrop = document.getElementById("charModalBackdrop");
-  const btnClose = document.getElementById("charModalClose");
-  const titleEl = document.getElementById("charModalTitle");
-  const subEl = document.getElementById("charModalSub");
-  const imgEl = document.getElementById("charModalImg");
-  const infoEl = document.getElementById("charModalInfo");
-  const favBtn = document.getElementById("charModalFav");
+  let rawArr = [];
+  let shown = [];
 
-  let allRaw = [];
-  let shownRaw = [];
-  let activeRaw = null; // <- spara raw objektet (enklare än att leta via id)
-  let lastFocus = null;
+  function render(list) {
+    const favs = favSetForType();
 
-  function render(rawItems) {
-    const favSet = buildFavKeySet();
-
-    const cards = rawItems.map((raw) => {
-      const id = rawId(raw);
-      return mapCharacterToListCard(raw, { isFavorite: favSet.has(id) });
+    const cardItems = list.map((raw) => {
+      const vm = mapCharacterToListCard(raw);
+      return { ...vm, isFavorite: favs.has(String(vm.id)) };
     });
 
-    gridEl.innerHTML = cardGrid({ items: cards });
+    gridEl.innerHTML = cardGrid({ items: cardItems });
   }
 
   async function load() {
@@ -193,153 +150,72 @@ export async function mountCharactersPage() {
       const data = await getCharacters();
       const arr = Array.isArray(data) ? data : data?.results ?? [];
 
-      allRaw = arr.filter((x) => MAIN_CHARACTERS.has(x?.name));
-      shownRaw = [...allRaw];
+      rawArr = arr.filter((x) => MAIN_CHARACTERS.has(x?.name));
+      shown = [...rawArr];
 
-      render(shownRaw);
-      statusEl.textContent = `Showing ${shownRaw.length} main characters.`;
+      render(shown);
+      statusEl.textContent = `Showing ${shown.length} main characters.`;
     } catch (e) {
-      gridEl.innerHTML = `<div class="meta">Could not load data right now.</div>`;
-      statusEl.textContent =
-        "If you are offline, cached data may still be available.";
+      gridEl.innerHTML = `<div class="meta">Could not load data right now</div>`;
+      statusEl.textContent = "If you are offline, cached data may still be available.";
       console.error(e);
     }
   }
 
   function applyFilter() {
     const q = inputEl.value.trim().toLowerCase();
-    shownRaw = allRaw.filter((x) => (x?.name ?? "").toLowerCase().includes(q));
-    render(shownRaw);
+    shown = rawArr.filter((x) => (x?.name ?? "").toLowerCase().includes(q));
+    render(shown);
+    statusEl.textContent = `Showing ${shown.length} main characters.`;
   }
 
-  function openModal(raw) {
-    if (!raw) return;
+  await load();
 
-    const favSet = buildFavKeySet();
-    const id = rawId(raw);
-
-    const details = mapCharacterToDetails(raw, {
-      isFavorite: favSet.has(id),
-    });
-
-    // Viktigt: din favorites.js kräver type + id
-    details.type = TYPE;
-
-    activeRaw = raw;
-
-    titleEl.textContent = details.name;
-    subEl.textContent = `House: ${details.house} · Patronus: ${details.patronus}`;
-
-    if (details.image) {
-      imgEl.src = details.image;
-      imgEl.alt = details.name;
-      imgEl.style.display = "block";
-    } else {
-      imgEl.style.display = "none";
-    }
-
-    infoEl.innerHTML = `
-      <div class="info-grid">
-        <div><span>Born</span><strong>${details.born}</strong></div>
-        <div><span>Blood status</span><strong>${details.bloodStatus}</strong></div>
-        <div><span>House</span><strong>${details.house}</strong></div>
-        <div><span>Patronus</span><strong>${details.patronus}</strong></div>
-        <div><span>Actor</span><strong>${details.actor}</strong></div>
-        <div><span>Wizard</span><strong>${details.wizard}</strong></div>
-        <div><span>Alive</span><strong>${details.alive}</strong></div>
-        <div><span>Species</span><strong>${details.species}</strong></div>
-      </div>
-    `;
-
-    favBtn.textContent = details.isFavorite ? "★ Favorite" : "☆ Favorite";
-    favBtn.setAttribute("aria-pressed", details.isFavorite ? "true" : "false");
-
-    lastFocus = document.activeElement;
-    backdrop.hidden = false;
-    modal.hidden = false;
-    btnClose.focus();
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeModal() {
-    modal.hidden = true;
-    backdrop.hidden = true;
-    document.body.style.overflow = "";
-    lastFocus?.focus?.();
-  }
-
-  function toggleFavForRaw(raw) {
-    if (!raw) return;
-
-    const favSet = buildFavKeySet();
-    const id = rawId(raw);
-
-    // Spara "details" som fav, så FavoritesPage kan visa mer info senare
-    const details = mapCharacterToDetails(raw, { isFavorite: favSet.has(id) });
-
-    // VIKTIGT: din favorites storage använder type:id som key
-    details.type = TYPE;
-
-    toggleFavorite(details);
-  }
-
-  // --- Events ---
+  inputEl.addEventListener("input", applyFilter);
+  reloadBtn.addEventListener("click", load);
   gridEl.addEventListener("click", (e) => {
-    // Favorite toggle
+    const openEl = e.target.closest("[data-open-id]");
     const favEl = e.target.closest("[data-fav-id]");
+
     if (favEl) {
       e.stopPropagation();
-      const id = decodeId(favEl.dataset.favId);
-      const raw = allRaw.find((x) => rawId(x) === id);
+      const id = decodeURIComponent(favEl.dataset.favId);
+      const raw = rawArr.find((x) => rawId(x) === String(id));
       if (!raw) return;
-
-      toggleFavForRaw(raw);
-      render(shownRaw);
-
-      // (valfritt) uppdatera aria-pressed direkt om du vill:
-      // favEl.setAttribute("aria-pressed", buildFavKeySet().has(id) ? "true" : "false");
+      const mapped = mapCharacterToDetails(raw);
+      mapped.type = TYPE;
+      toggleFavInGrid(id, mapped, favEl);
+      render(shown);
       return;
     }
 
-    // Open modal
-    const openEl = e.target.closest("[data-open-id]");
-    if (!openEl) return;
+    if (openEl) {
+      const id = decodeURIComponent(openEl.dataset.openId);
+      const raw = rawArr.find((x) => rawId(x) === String(id));
+      if (!raw) return;
 
-    const id = decodeId(openEl.dataset.openId);
-    const raw = allRaw.find((x) => rawId(x) === id);
-    openModal(raw);
+      const detail = mapCharacterToDetails(raw);
+      detail.type = TYPE;
+
+      mountModal("character", detail);
+      ctrl.open(detail);
+    }
   });
 
   gridEl.addEventListener("keydown", (e) => {
     if (e.key !== "Enter" && e.key !== " ") return;
     const openEl = e.target.closest("[data-open-id]");
     if (!openEl) return;
+
     e.preventDefault();
+    const id = decodeURIComponent(openEl.dataset.openId);
+    const raw = rawArr.find((x) => rawId(x) === String(id));
+    if (!raw) return;
 
-    const id = decodeId(openEl.dataset.openId);
-    const raw = allRaw.find((x) => rawId(x) === id);
-    openModal(raw);
+    const detail = mapCharacterToDetails(raw);
+    detail.type = TYPE;
+
+    mountModal("character", detail);
+    ctrl.open(detail);
   });
-
-  btnClose.addEventListener("click", closeModal);
-  backdrop.addEventListener("click", closeModal);
-  window.addEventListener("keydown", (e) => {
-    if (!modal.hidden && e.key === "Escape") closeModal();
-  });
-
-  favBtn.addEventListener("click", () => {
-    if (!activeRaw) return;
-
-    toggleFavForRaw(activeRaw);
-    render(shownRaw);
-
-    const nowFav = buildFavKeySet().has(rawId(activeRaw));
-    favBtn.textContent = nowFav ? "★ Favorite" : "☆ Favorite";
-    favBtn.setAttribute("aria-pressed", nowFav ? "true" : "false");
-  });
-
-  inputEl.addEventListener("input", applyFilter);
-  reloadBtn.addEventListener("click", load);
-
-  await load();
 }
