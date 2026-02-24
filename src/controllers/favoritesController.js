@@ -1,6 +1,7 @@
 import { isFavorite, toggleFavorite, } from "../services/storage/favorites";
 
 export function toggleFavInGrid(id, mapped, btnEl) {
+  console.log("toggleFavInGrid", id, mapped);
   toggleFavorite(mapped);
   const nowFav = isFavorite(id);
   btnEl.textContent = nowFav ? "★" : "☆";

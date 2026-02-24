@@ -1,10 +1,13 @@
 import { mapApiToListCard } from "../adapters/mappers/mapApiToListCard";
-import { beastList } from "../components/beastCard"
 import { cardGrid } from "../components/cards/cardGrid";
 import { getBeast } from "../services/api/beastsApi";
 import { getBeasts } from "../services/api/beastsApi";
 import { getFavorites } from "../services/storage/favorites";
-
+import { mountModal } from "../controllers/modalController";
+import { createModalController } from "../controllers/modalController";
+import { toggleFavInGrid } from "../controllers/favoritesController";
+import { mapApiToDetail } from "../adapters/mappers/beastMapper";
+import { modalCard } from "../components/cards/modalCard";
 
 export function beastPage(){
     return `
@@ -86,16 +89,17 @@ export function beastPage(){
   </section>
 
   <!-- MODAL (popup) -->
-  <div class="modal-backdrop" id="beastModalBackdrop" hidden></div>
+   ${modalCard("beast")}
 </main>
     `;
 }
 
 export async function mountBeastPage(){
-    document.querySelector("#beastModalBackdrop").innerHTML = beastList();
 
     const gridEl = document.getElementById("beastGrid");
     const statusEl = document.getElementById("beastStatusText");
+    let rawArr = [];
+    const ctrl = createModalController({backdropId: "beastModalBackdrop", modalId:    "beastModal", closeId:    "beastModalClose",});
     
     async function load() {
     gridEl.innerHTML = `<div class="meta">Loading...</div>`;
@@ -103,7 +107,7 @@ export async function mountBeastPage(){
 
     try {
     const data = await getBeasts();
-    const rawArr = Array.isArray(data) ? data : data?.results ?? [];
+    rawArr = Array.isArray(data) ? data : data?.results ?? [];
 
     const favSet = new Set(getFavorites().map((f) => String(f.id)));
 
@@ -121,4 +125,25 @@ export async function mountBeastPage(){
     }
   }
   load();
+
+
+  gridEl.addEventListener("click", async (e) => {
+  const openEl = e.target.closest("[data-open-id]");
+  const favEl = e.target.closest("[data-fav-id]");
+
+if (favEl) {
+  const id = decodeURIComponent(favEl.dataset.favId);
+  const raw = rawArr.find(x => String(x.id) === id);
+  const mapped = mapApiToListCard(raw);
+  toggleFavInGrid(id, mapped, favEl);
+}
+
+  if (openEl) {
+    const id = decodeURIComponent(openEl.dataset.openId);
+    const raw = await getBeast(id);
+    const detail = mapApiToDetail(raw);
+    mountModal("beast", detail);
+    ctrl.open(detail);
+  }
+});
 }
