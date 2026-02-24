@@ -1,28 +1,45 @@
-/** Normalisera data från API till “våra” fält */
-function mapApiToCard(c) {
-  const id = c.id ?? c._id ?? c.name;
-
-  const born = c.dateOfBirth || "—";
-  const bloodStatus = c.ancestry ? c.ancestry : "—";
+// src/adapters/mappers/characterMapper.js
+export function mapCharacterToListCard(raw, { isFavorite = false } = {}) {
+  const id = raw?.id ?? raw?._id ?? raw?.name;
 
   return {
-    id,
-    name: c.name ?? "Unknown",
-    house: c.house || "—",
-    species: c.species || "—",
-    actor: c.actor || "—",
-    patronus: c.patronus || "—",
-    image: c.image || "",
-    alive: typeof c.alive === "boolean" ? (c.alive ? "Yes" : "No") : "—",
-    ancestry: c.ancestry || "—",
-    wizard: typeof c.wizard === "boolean" ? (c.wizard ? "Yes" : "No") : "—",
+    type: "character",
+    id: String(id),
+    name: raw?.name ?? "Unknown",
+    image: raw?.image ?? "",
+    isFavorite: Boolean(isFavorite),
+  };
+}
 
-    // Wiki-liknande fält (hp-api saknar dessa)
-    born,
-    bloodStatus,
+export function mapCharacterToDetails(raw, { isFavorite = false } = {}) {
+  const id = raw?.id ?? raw?._id ?? raw?.name;
+
+  return {
+    type: "character",
+    id: String(id),
+
+    name: raw?.name ?? "Unknown",
+    image: raw?.image ?? "",
+
+    house: raw?.house || "—",
+    species: raw?.species || "—",
+    actor: raw?.actor || "—",
+    patronus: raw?.patronus || "—",
+
+    alive:
+      typeof raw?.alive === "boolean" ? (raw.alive ? "Yes" : "No") : "—",
+    wizard:
+      typeof raw?.wizard === "boolean" ? (raw.wizard ? "Yes" : "No") : "—",
+
+    born: raw?.dateOfBirth || "—",
+    bloodStatus: raw?.ancestry || "—",
+
+    // placeholders (hp-api saknar “wiki fields”)
     nationality: "—",
     title: "—",
     physical: "—",
     relationships: "—",
+
+    isFavorite: Boolean(isFavorite),
   };
 }

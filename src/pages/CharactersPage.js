@@ -1,20 +1,12 @@
-/* Pages ansvar:
-- unikt html skelett för varje sida.
-- Definierar sidans struktur (layout placeholders).
-- Hanterar mount-logik och dataflöde.
-- hämta in återanvändbara delar från components via placeholders.
-
-mount:
-- Hämtar data baserat på route-parametrar.
-- Stoppar in renderad HTML i rätt placeholders.
-- Kopplar ihop data + UI.
-*/
-
 import { getCharacters } from "../services/api/characterApi.js";
+import {mapCharacterToListCard, mapCharacterToDetails,} from "../adapters/mappers/characterMapper.js";
+import { cardGrid } from "../components/cards/cardGrid.js";
+import { modalCard } from "../components/cards/modalCard.js";
+import { getFavorites } from "../services/storage/favorites.js";
+import { createModalController, mountModal } from "../controllers/modalController.js";
+import { toggleFavInGrid } from "../controllers/favoritesController.js";
 
-const FAV_KEY = "wizardpedia:favorites";
-
-/** Bara huvudkaraktärer (matcha exakt namn från API) */
+const TYPE = "character";
 const MAIN_CHARACTERS = new Set([
   "Harry Potter",
   "Hermione Granger",
@@ -28,57 +20,26 @@ const MAIN_CHARACTERS = new Set([
   "Severus Snape",
 ]);
 
-function loadFavs() {
-  try {
-    return JSON.parse(localStorage.getItem(FAV_KEY)) ?? [];
-  } catch {
-    return [];
-  }
-}
-function saveFavs(favs) {
-  localStorage.setItem(FAV_KEY, JSON.stringify(favs));
-}
-function isFav(favs, id) {
-  return favs.some((x) => x.id === id);
+function rawId(raw) {
+  return String(raw?.id ?? raw?._id ?? raw?.name ?? "");
 }
 
-/** Normalisera data från API till “våra” fält */
-function mapApiToCard(c) {
-  const id = c.id ?? c._id ?? c.name;
-
-  const born = c.dateOfBirth || "—";
-  const bloodStatus = c.ancestry ? c.ancestry : "—";
-
-  return {
-    id,
-    name: c.name ?? "Unknown",
-    house: c.house || "—",
-    species: c.species || "—",
-    actor: c.actor || "—",
-    patronus: c.patronus || "—",
-    image: c.image || "",
-    alive: typeof c.alive === "boolean" ? (c.alive ? "Yes" : "No") : "—",
-    ancestry: c.ancestry || "—",
-    wizard: typeof c.wizard === "boolean" ? (c.wizard ? "Yes" : "No") : "—",
-
-    // Wiki-liknande fält (hp-api saknar dessa)
-    born,
-    bloodStatus,
-    nationality: "—",
-    title: "—",
-    physical: "—",
-    relationships: "—",
-  };
+function favSetForType() {
+  return new Set(
+    getFavorites()
+      .filter((f) => String(f?.type) === TYPE)
+      .map((f) => String(f.id))
+  );
 }
 
 export function CharactersPage() {
   return `
     <main class="container">
-      <section class="frame" aria-label="Home">
+      <section class="frame" aria-label="Characters">
         <div class="grid">
 
           <article class="card main-card">
-            <div class="hero" aria-label="Hero section">
+            <div class="hero" aria-label="Characters hero section">
               <div>
                 <p class="kicker">YOUR LEGACY IS WHAT YOU MAKE IT</p>
                 <h1 class="h1">LIVE THE UNWRITTEN</h1>
@@ -89,10 +50,10 @@ export function CharactersPage() {
                 </p>
               </div>
 
-              <div class="media" aria-label="Featured image">
+              <div class="media" aria-label="Featured character image">
                 <img
                   src="characters.png"
-                  alt="Castle-like view reminiscent of Hogwarts"
+                  alt="Featured characters"
                   loading="lazy"
                 />
               </div>
@@ -151,89 +112,35 @@ export function CharactersPage() {
       </section>
 
       <!-- MODAL (popup) -->
-      <div class="modal-backdrop" id="charModalBackdrop" hidden></div>
-
-      <div class="modal" id="charModal" role="dialog" aria-modal="true" aria-labelledby="charModalTitle" hidden>
-        <button class="modal-close" id="charModalClose" type="button" aria-label="Close">×</button>
-
-        <div class="modal-head">
-          <h2 id="charModalTitle" class="modal-title">Title</h2>
-          <p id="charModalSub" class="modal-sub">House · Species</p>
-        </div>
-
-        <div class="modal-body">
-          <div class="modal-left">
-            <img id="charModalImg" class="modal-img" alt="" />
-            <button id="charModalFav" class="modal-fav" type="button">☆ Favorite</button>
-          </div>
-
-          <div class="modal-right" id="charModalInfo"></div>
-        </div>
-      </div>
-
+      ${modalCard("character")}
     </main>
   `;
 }
 
 export async function mountCharactersPage() {
   const gridEl = document.getElementById("characterGrid");
+  const statusEl = document.getElementById("statusText");
   const inputEl = document.getElementById("searchInput");
   const reloadBtn = document.getElementById("reloadBtn");
-  const statusEl = document.getElementById("statusText");
+  const ctrl = createModalController({
+    backdropId: "characterModalBackdrop",
+    modalId: "characterModal",
+    closeId: "characterModalClose",
+  });
 
-  const modal = document.getElementById("charModal");
-  const backdrop = document.getElementById("charModalBackdrop");
-  const btnClose = document.getElementById("charModalClose");
-  const titleEl = document.getElementById("charModalTitle");
-  const subEl = document.getElementById("charModalSub");
-  const imgEl = document.getElementById("charModalImg");
-  const infoEl = document.getElementById("charModalInfo");
-  const favBtn = document.getElementById("charModalFav");
-
-  let all = [];
+  let rawArr = [];
   let shown = [];
-  let favs = loadFavs();
-  let active = null;
-  let lastFocus = null;
 
-  function render(items) {
-    if (!items.length) {
-      gridEl.innerHTML = `<div class="meta">No results.</div>`;
-      return;
-    }
+  function render(list) {
+    const favs = favSetForType();
 
-    gridEl.innerHTML = items.map(raw => {
-      const c = mapApiToCard(raw);
-      const fav = isFav(favs, c.id);
+    const cardItems = list.map((raw) => {
+      const vm = mapCharacterToListCard(raw);
+      return { ...vm, isFavorite: favs.has(String(vm.id)) };
+    });
 
-      return `
-  <div class="char-card" role="button" tabindex="0" data-open-id="${encodeURIComponent(String(c.id))}">
-    <div class="char-imgwrap">
-      ${c.image
-        ? `<img src="${c.image}" alt="${c.name}" loading="lazy" />`
-        : `<div class="char-fallback" aria-hidden="true">✨</div>`
-      }
-
-      <button
-        class="fav-overlay"
-        type="button"
-        data-fav-id="${String(c.id)}"
-        aria-label="Toggle favorite"
-        aria-pressed="${fav ? "true" : "false"}"
-        title="${fav ? "Remove favorite" : "Add favorite"}"
-      >${fav ? "★" : "☆"}</button>
-    </div>
-
-    <div class="char-name">${c.name}</div>
-  </div>
-`;
-
-
-    }).join("");
+    gridEl.innerHTML = cardGrid({ items: cardItems });
   }
-
-     
-
 
   async function load() {
     gridEl.innerHTML = `<div class="meta">Loading...</div>`;
@@ -243,117 +150,72 @@ export async function mountCharactersPage() {
       const data = await getCharacters();
       const arr = Array.isArray(data) ? data : data?.results ?? [];
 
-      all = arr.filter(x => MAIN_CHARACTERS.has(x.name));
-      shown = [...all];
+      rawArr = arr.filter((x) => MAIN_CHARACTERS.has(x?.name));
+      shown = [...rawArr];
 
       render(shown);
       statusEl.textContent = `Showing ${shown.length} main characters.`;
-    } catch{
-      gridEl.innerHTML = `<div class="meta">Could not load data right now.</div>`;
+    } catch (e) {
+      gridEl.innerHTML = `<div class="meta">Could not load data right now</div>`;
       statusEl.textContent = "If you are offline, cached data may still be available.";
-  
+      console.error(e);
     }
   }
 
   function applyFilter() {
     const q = inputEl.value.trim().toLowerCase();
-    shown = all.filter(x => (x.name ?? "").toLowerCase().includes(q));
+    shown = rawArr.filter((x) => (x?.name ?? "").toLowerCase().includes(q));
     render(shown);
+    statusEl.textContent = `Showing ${shown.length} main characters.`;
   }
 
-  function openModalById(id) {
-    const raw = all.find(x => String(x.id ?? x._id ?? x.name) === String(id));
-    if (!raw) return;
-
-    active = mapApiToCard(raw);
-
-    titleEl.textContent = active.name;
-    subEl.textContent = `House: ${active.house} · Patronus: ${active.patronus}`;
-
-    if (active.image) {
-      imgEl.src = active.image;
-      imgEl.alt = active.name;
-      imgEl.style.display = "block";
-    } else {
-      imgEl.style.display = "none";
-    }
-
-    infoEl.innerHTML = `
-      <div class="info-grid">
-        <div><span>Born</span><strong>${active.born}</strong></div>
-        <div><span>Blood status</span><strong>${active.bloodStatus}</strong></div>
-        <div><span>House</span><strong>${active.house}</strong></div>
-        <div><span>Patronus</span><strong>${active.patronus}</strong></div>
-        <div><span>Actor</span><strong>${active.actor}</strong></div>
-        <div><span>Wizard</span><strong>${active.wizard}</strong></div>
-        <div><span>Alive</span><strong>${active.alive}</strong></div>
-        <div><span>Species</span><strong>${active.species}</strong></div>
-      </div>
-    `;
-
-    const fav = isFav(favs, active.id);
-    favBtn.textContent = fav ? "★ Favorite" : "☆ Favorite";
-    favBtn.setAttribute("aria-pressed", fav ? "true" : "false");
-
-    lastFocus = document.activeElement;
-    backdrop.hidden = false;
-    modal.hidden = false;
-    btnClose.focus();
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeModal() {
-    modal.hidden = true;
-    backdrop.hidden = true;
-    document.body.style.overflow = "";
-    lastFocus?.focus?.();
-  }
-
-  function toggleFavById(id) {
-    const raw = all.find(x => String(x.id ?? x._id ?? x.name) === String(id));
-    if (!raw) return;
-
-    const mapped = mapApiToCard(raw);
-    const exists = isFav(favs, mapped.id);
-
-    favs = exists ? favs.filter(x => x.id !== mapped.id) : [...favs, mapped];
-    saveFavs(favs);
-  }
-
-  gridEl.addEventListener("click", (e) => {
-    const favBtnEl = e.target.closest("[data-fav-id]");
-    if (favBtnEl) {
-      e.stopPropagation();
-      const id = favBtnEl.dataset.favId;
-      const pressed = favBtnEl.getAttribute("aria-pressed") === "true";
-      toggleFavById(id);
-      favBtnEl.setAttribute("aria-pressed", String(!pressed));
-      favBtnEl.textContent = !pressed ? "★" : "☆";
-      return;
-    }
-
-    const openEl = e.target.closest("[data-open-id]");
-    if (!openEl) return;
-    openModalById(decodeURIComponent(openEl.dataset.openId));
-  });
-
-  btnClose.addEventListener("click", closeModal);
-  backdrop.addEventListener("click", closeModal);
-  window.addEventListener("keydown", (e) => {
-    if (!modal.hidden && e.key === "Escape") closeModal();
-  });
-
-  favBtn.addEventListener("click", () => {
-    if (!active) return;
-    const exists = isFav(favs, active.id);
-    toggleFavById(active.id);
-    favBtn.textContent = exists ? "☆ Favorite" : "★ Favorite";
-    favBtn.setAttribute("aria-pressed", exists ? "false" : "true");
-    render(shown);
-  });
+  await load();
 
   inputEl.addEventListener("input", applyFilter);
   reloadBtn.addEventListener("click", load);
+  gridEl.addEventListener("click", (e) => {
+    const openEl = e.target.closest("[data-open-id]");
+    const favEl = e.target.closest("[data-fav-id]");
 
-  await load();
+    if (favEl) {
+      e.stopPropagation();
+      const id = decodeURIComponent(favEl.dataset.favId);
+      const raw = rawArr.find((x) => rawId(x) === String(id));
+      if (!raw) return;
+      const mapped = mapCharacterToDetails(raw);
+      mapped.type = TYPE;
+      toggleFavInGrid(id, mapped, favEl);
+      render(shown);
+      return;
+    }
+
+    if (openEl) {
+      const id = decodeURIComponent(openEl.dataset.openId);
+      const raw = rawArr.find((x) => rawId(x) === String(id));
+      if (!raw) return;
+
+      const detail = mapCharacterToDetails(raw);
+      detail.type = TYPE;
+
+      mountModal("character", detail);
+      ctrl.open(detail);
+    }
+  });
+
+  gridEl.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const openEl = e.target.closest("[data-open-id]");
+    if (!openEl) return;
+
+    e.preventDefault();
+    const id = decodeURIComponent(openEl.dataset.openId);
+    const raw = rawArr.find((x) => rawId(x) === String(id));
+    if (!raw) return;
+
+    const detail = mapCharacterToDetails(raw);
+    detail.type = TYPE;
+
+    mountModal("character", detail);
+    ctrl.open(detail);
+  });
 }
