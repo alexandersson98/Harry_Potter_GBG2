@@ -1,4 +1,6 @@
-import { getSpells } from "../services/api/spellsApi.js"
+import { getSpells } from "../services/api/spellsApi.js";
+import { isFavorite, toggleFavorite } from "../services/storage/favorites.js";
+import { syncFavButtonsIn, toggleFavInGrid, syncFavButton } from "../controllers/favoritesController.js";
 
 export function SpellsPage() {
   return `
@@ -45,7 +47,7 @@ export function SpellsPage() {
               <h2 class="side-title">Tip</h2>
               <div style="padding:12px">
                 <p class="meta" style="margin-top:0">
-                  Use the search bar to quickly find spells like “Accio” or “Expelliarmus”.
+                  Use the search bar to quickly find spells like "Accio" or "Expelliarmus".
                 </p>
               </div>
             </section>
@@ -57,6 +59,19 @@ export function SpellsPage() {
                 <a href="#/locations">Locations</a>
                 <a href="#/spells" aria-current="page">Spells</a>
                 <a href="#/beasts">Beasts</a>
+              </div>
+            </section>
+
+            <section class="side-card" aria-label="Favorites (offline)">
+              <h2 class="side-title">Favorites</h2>
+              <div style="padding:12px">
+                <p class="meta" style="margin-top:0">
+                  Favorites are saved locally and work offline.
+                </p>
+                <a class="browse-btn-like" href="#/favorites"
+                  style="display:block;text-align:center;border:2px solid rgba(255,255,255,.18);padding:12px;font-weight:900;text-decoration:none;color:rgba(255,255,255,.92);background:rgba(0,0,0,.18);border-radius:14px;">
+                  Open favorites
+                </a>
               </div>
             </section>
           </aside>
@@ -75,6 +90,9 @@ export function SpellsPage() {
         </div>
 
         <div class="modal-body">
+          <div class="modal-left">
+            <button id="spellModalFav" class="modal-fav" type="button">☆ Favorite</button>
+          </div>
           <div class="modal-right" id="spellModalInfo"></div>
         </div>
       </div>
@@ -94,9 +112,11 @@ export async function mountSpellsPage() {
   const titleEl = document.getElementById("spellModalTitle");
   const subEl = document.getElementById("spellModalSub");
   const infoEl = document.getElementById("spellModalInfo");
+  const favBtn = document.getElementById("spellModalFav");
 
   let all = [];
   let shown = [];
+  let active = null;
   let lastFocus = null;
 
   function normSpell(s) {
@@ -114,20 +134,27 @@ export async function mountSpellsPage() {
       return;
     }
 
-    gridEl.innerHTML = items
-      .map((raw) => {
-        const s = normSpell(raw);
-        return `
-          <div class="char-card" role="button" tabindex="0" data-open-id="${encodeURIComponent(String(s.id))}">
-            <div class="char-imgwrap">
-              <div class="char-fallback" aria-hidden="true">✨</div>
-            </div>
-            <div class="char-name">${s.name}</div>
-            <div class="meta" style="padding:0 12px 12px">${s.type}</div>
+    gridEl.innerHTML = items.map((raw) => {
+      const s = normSpell(raw);
+      const fav = isFavorite(String(s.id));
+      return `
+        <div class="char-card" role="button" tabindex="0" data-open-id="${encodeURIComponent(String(s.id))}">
+          <div class="char-imgwrap">
+            <div class="char-fallback" aria-hidden="true">✨</div>
+            <button
+              class="fav-overlay"
+              type="button"
+              data-fav-id="${encodeURIComponent(String(s.id))}"
+              aria-label="Toggle favorite"
+              aria-pressed="${fav ? "true" : "false"}"
+              title="${fav ? "Remove favorite" : "Add favorite"}"
+            >${fav ? "★" : "☆"}</button>
           </div>
-        `;
-      })
-      .join("");
+          <div class="char-name">${s.name}</div>
+          <div class="meta" style="padding:0 12px 12px">${s.type}</div>
+        </div>
+      `;
+    }).join("");
   }
 
   async function load() {
@@ -137,10 +164,8 @@ export async function mountSpellsPage() {
     try {
       const data = await getSpells();
       const arr = Array.isArray(data) ? data : data?.results ?? [];
-
       all = arr;
       shown = [...all];
-
       render(shown);
       statusEl.textContent = `Showing ${shown.length} spells.`;
     } catch (e) {
@@ -160,18 +185,20 @@ export async function mountSpellsPage() {
     const raw = all.find((x) => String(x.id ?? x._id ?? x.name) === String(id));
     if (!raw) return;
 
-    const s = normSpell(raw);
+    active = normSpell(raw);
 
-    titleEl.textContent = s.name;
-    subEl.textContent = `Type: ${s.type}`;
+    titleEl.textContent = active.name;
+    subEl.textContent = `Type: ${active.type}`;
     infoEl.innerHTML = `
       <div class="info-grid">
         <div style="grid-column:1/-1">
           <span>Description</span>
-          <strong>${s.description}</strong>
+          <strong>${active.description}</strong>
         </div>
       </div>
     `;
+
+    syncFavButton(favBtn, active.id);
 
     lastFocus = document.activeElement;
     backdrop.hidden = false;
@@ -188,9 +215,27 @@ export async function mountSpellsPage() {
   }
 
   gridEl.addEventListener("click", (e) => {
+    const favBtnEl = e.target.closest("[data-fav-id]");
+    if (favBtnEl) {
+      e.stopPropagation();
+      const id = decodeURIComponent(favBtnEl.dataset.favId);
+      const raw = all.find(x => String(x.id ?? x._id ?? x.name) === id);
+      if (!raw) return;
+      const mapped = normSpell(raw);
+      toggleFavInGrid(id, mapped, favBtnEl);
+      return;
+    }
+
     const openEl = e.target.closest("[data-open-id]");
     if (!openEl) return;
     openModalById(decodeURIComponent(openEl.dataset.openId));
+  });
+
+  favBtn.addEventListener("click", () => {
+    if (!active) return;
+    toggleFavorite(active);
+    syncFavButton(favBtn, active.id);
+    syncFavButtonsIn(gridEl);
   });
 
   btnClose.addEventListener("click", closeModal);
