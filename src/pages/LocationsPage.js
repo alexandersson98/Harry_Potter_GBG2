@@ -1,6 +1,8 @@
 import { getLocations } from "../services/api/locationsApi.js";
 import { mapLocation } from "../adapters/mappers/locationMapper.js";
 import { locationList } from "../components/locationList.js";
+import { getFavorites, toggleFavorite, isFavorite } from "../services/storage/favorites.js";
+import { syncFavButtonsIn, toggleFavInGrid, syncFavButton } from "../controllers/favoritesController.js";
 
 export function LocationsPage() {
   return `
@@ -48,7 +50,7 @@ export function LocationsPage() {
               <h2 class="side-title">Tip</h2>
               <div style="padding:12px">
                 <p class="meta" style="margin-top:0">
-                  Use the search bar to quickly find locations like “Hogwarts Castle” or “Diagon Alley”.
+                  Use the search bar to quickly find locations like "Hogwarts Castle" or "Diagon Alley".
                 </p>
               </div>
             </section>
@@ -100,9 +102,11 @@ export async function mountLocationsPage() {
   const titleEl = document.getElementById("locationModalTitle");
   const subEl = document.getElementById("locationModalSub");
   const infoEl = document.getElementById("locationModalInfo");
+  const favBtn = document.getElementById("locationModalFav");
 
   let all = [];
   let shown = [];
+  let active = null;
   let lastFocus = null;
 
   function render(items) {
@@ -113,13 +117,22 @@ export async function mountLocationsPage() {
 
     gridEl.innerHTML = items.map(raw => {
       const l = mapLocation(raw);
+      const fav = isFavorite(String(l.id));
       return `
         <div class="char-card" role="button" tabindex="0" data-open-id="${l.id}">
           <div class="char-imgwrap">
-           ${l.image
+            ${l.image
               ? `<img src="${l.image}" alt="${l.name}" loading="lazy" />`
               : `<div class="char-fallback" aria-hidden="true">📍</div>`
             }
+            <button
+              class="fav-overlay"
+              type="button"
+              data-fav-id="${String(l.id)}"
+              aria-label="Toggle favorite"
+              aria-pressed="${fav ? "true" : "false"}"
+              title="${fav ? "Remove favorite" : "Add favorite"}"
+            >${fav ? "★" : "☆"}</button>
           </div>
           <div class="char-name">${l.name}</div>
           <div class="meta">${l.type}</div>
@@ -148,31 +161,33 @@ export async function mountLocationsPage() {
     const raw = all.find(x => x.id == id);
     if (!raw) return;
 
-    const l = mapLocation(raw);
+    active = mapLocation(raw);
 
-    titleEl.textContent = l.name;
-    subEl.textContent = l.type;
+    titleEl.textContent = active.name;
+    subEl.textContent = active.type;
 
     infoEl.innerHTML = `
       <div class="info-grid">
         <div style="grid-column:1/-1">
           <span>Description</span>
-          <strong>${l.description}</strong>
+          <strong>${active.description}</strong>
         </div>
         <div>
           <span>Characters</span>
-          <strong>${l.characters.join(", ") || "—"}</strong>
+          <strong>${active.characters.join(", ") || "—"}</strong>
         </div>
         <div>
           <span>Beasts</span>
-          <strong>${l.beasts.join(", ") || "—"}</strong>
+          <strong>${active.beasts.join(", ") || "—"}</strong>
         </div>
         <div>
           <span>Spells</span>
-          <strong>${l.spells.join(", ") || "—"}</strong>
+          <strong>${active.spells.join(", ") || "—"}</strong>
         </div>
       </div>
     `;
+
+    syncFavButton(favBtn, active.id);
 
     lastFocus = document.activeElement;
     backdrop.hidden = false;
@@ -189,9 +204,27 @@ export async function mountLocationsPage() {
   }
 
   gridEl.addEventListener("click", (e) => {
-    const el = e.target.closest("[data-open-id]");
-    if (!el) return;
-    openModalById(el.dataset.openId);
+    const favBtnEl = e.target.closest("[data-fav-id]");
+    if (favBtnEl) {
+      e.stopPropagation();
+      const id = decodeURIComponent(favBtnEl.dataset.favId);
+      const raw = all.find(x => String(x.id) === id);
+      if (!raw) return;
+      const mapped = mapLocation(raw);
+      toggleFavInGrid(id, mapped, favBtnEl);
+      return;
+    }
+
+    const openEl = e.target.closest("[data-open-id]");
+    if (!openEl) return;
+    openModalById(openEl.dataset.openId);
+  });
+
+  favBtn.addEventListener("click", () => {
+    if (!active) return;
+    toggleFavorite(active);
+    syncFavButton(favBtn, active.id);
+    syncFavButtonsIn(gridEl);
   });
 
   btnClose.addEventListener("click", closeModal);
