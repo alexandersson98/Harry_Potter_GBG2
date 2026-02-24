@@ -1,5 +1,18 @@
 import { isFavorite, toggleFavorite, } from "../services/storage/favorites";
 
+export function syncFavButtonsIn(rootEl) {
+  if (!rootEl) return;
+
+  const btns = rootEl.querySelectorAll("[data-fav-id]");
+  btns.forEach((btn) => {
+    const id = decodeURIComponent(btn.dataset.favId);
+    const fav = isFavorite(String(id));
+    btn.textContent = fav ? "★" : "☆";
+    btn.setAttribute("aria-pressed", String(fav));
+  });
+}
+
+
 export function toggleFavInGrid(id, mapped, btnEl) {
   console.log("toggleFavInGrid", id, mapped);
   toggleFavorite(mapped);
