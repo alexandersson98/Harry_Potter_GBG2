@@ -64,6 +64,7 @@ export function beastPage(){
         <section aria-label="Browse">
           <h2 class="browse-title">BROWSE</h2>
           <div class="browsebtns">
+            <a href="#/">Home</a>
             <a href="#/characters">Characters</a>
             <a href="#/locations">Locations</a>
             <a href="#/spells">Spells</a>
@@ -109,7 +110,11 @@ export async function mountBeastPage(){
     const data = await getBeasts();
     rawArr = Array.isArray(data) ? data : data?.results ?? [];
 
-    const favSet = new Set(getFavorites().map((f) => String(f.id)));
+    const favSet = new Set(
+    getFavorites()
+    .filter((f) => String(f?.type) === "beast")
+    .map((f) => String(f.id))
+    );
 
     const cardItems = rawArr.map((raw) => {
     const vm = mapApiToListCard(raw); 
@@ -131,21 +136,21 @@ export async function mountBeastPage(){
   const favEl = e.target.closest("[data-fav-id]");
 
 if (favEl) {
-    e.preventDefault();
+  e.preventDefault();
   e.stopPropagation();
   const id = decodeURIComponent(favEl.dataset.favId);
   const raw = rawArr.find(x => String(x.id) === id);
-  if (!raw) return; 
-  const mapped = mapApiToListCard(raw);
+  if (!raw) return;
+  const mapped = mapApiToDetail(raw);
+  mapped.type = "beast";
   toggleFavInGrid(id, mapped, favEl);
-   return; 
+  return;
 }
-
   if (openEl) {
   const id = decodeURIComponent(openEl.dataset.openId);
   const raw = await getBeast(id);
   const detail = mapApiToDetail(raw);
-
+  detail.type = "beast";
   ctrl.open(
     detail,
     () => mountModal("beast", detail),

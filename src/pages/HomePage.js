@@ -65,8 +65,10 @@ export function HomePage() {
               <h2 class="side-title">About us</h2>
               <div class="aboutbox">
                 <p class="meta" style="margin:0">
-                  Wizardpedia is a student-built Harry Potter wiki app created for a Frontend & Accessibility course.
-                  We focus on structure, teamwork, and a PWA that works offline after the first load.
+                  Wizardpedia is a student-built Harry Potter wiki app created by three students from Gothenburg, 
+                  Sweden, as part of a Frontend & Accessibility course. Our goal was to build a fully functional 
+                  Progressive Web App (PWA) that works offline, is keyboard navigable, and follows modern accessibility standards. 
+                  We focused on clean code structure, teamwork, and creating an experience worthy of the Wizarding World.
                 </p>
               </div>
             </section>
@@ -74,6 +76,7 @@ export function HomePage() {
             <section aria-label="Browse">
               <h2 class="browse-title">BROWSE</h2>
               <div class="browsebtns">
+                <a href="#/">Home</a>
                 <a href="#/characters">Characters</a>
                 <a href="#/locations">Locations</a>
                 <a href="#/spells">Spells</a>

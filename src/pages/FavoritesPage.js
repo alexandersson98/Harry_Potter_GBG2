@@ -1,5 +1,8 @@
 // src/pages/FavoritesPage.js
 import { getFavorites, removeFavorite } from "../services/storage/favorites.js";
+import { createModalController, mountModal } from "../controllers/modalController.js";
+import { modalCard } from "../components/cards/modalCard.js";
+import { syncFavButtonsIn } from "../controllers/favoritesController.js";
 
 function escapeHtml(str) {
   return String(str ?? "")
@@ -9,6 +12,14 @@ function escapeHtml(str) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
+
+const TYPE_ORDER = ["character", "beast", "location", "spell"];
+const TYPE_LABELS = {
+  character: "Characters",
+  beast: "Beasts",
+  location: "Locations",
+  spell: "Spells",
+};
 
 export function FavoritesPage() {
   return `
@@ -25,7 +36,7 @@ export function FavoritesPage() {
               </div>
             </div>
 
-            <div class="tools" aria-label="Search and favorites grid">
+            <div class="tools" aria-label="Search and favorites">
               <div class="searchrow">
                 <label class="sr-only" for="favSearchInput">Search favorites</label>
                 <input
@@ -36,7 +47,7 @@ export function FavoritesPage() {
                 />
               </div>
 
-              <div class="char-grid" id="favoritesGrid" aria-label="Favorite characters">
+              <div id="favoritesGrid" aria-label="Favorites">
                 <div class="meta">Loading...</div>
               </div>
 
@@ -48,7 +59,8 @@ export function FavoritesPage() {
             <section aria-label="Browse">
               <h2 class="browse-title">BROWSE</h2>
               <div class="browsebtns">
-                <a href="#/">Characters</a>
+                <a href="#/">Home</a>
+                <a href="#/characters">Characters</a>
                 <a href="#/locations">Locations</a>
                 <a href="#/spells">Spells</a>
                 <a href="#/beasts">Beasts</a>
@@ -67,6 +79,10 @@ export function FavoritesPage() {
 
         </div>
       </section>
+
+      ${modalCard("favChar")}
+      ${modalCard("favBeast")}
+      ${modalCard("favLocation")}
     </main>
   `;
 }
@@ -78,46 +94,124 @@ export function mountFavoritesPage() {
 
   let favs = getFavorites();
 
+  const ctrls = {
+    character: createModalController({ backdropId: "favCharModalBackdrop", modalId: "favCharModal", closeId: "favCharModalClose" }),
+    beast:     createModalController({ backdropId: "favBeastModalBackdrop", modalId: "favBeastModal", closeId: "favBeastModalClose" }),
+    location:  createModalController({ backdropId: "favLocationModalBackdrop", modalId: "favLocationModal", closeId: "favLocationModalClose" }),
+  };
+
+  const prefixes = { character: "favChar", beast: "favBeast", location: "favLocation" };
+
+  function openModal(item) {
+    const type = item.type;
+    const ctrl = ctrls[type];
+    const prefix = prefixes[type];
+    if (!ctrl || !prefix) return;
+
+    const detail = {
+      id: item.id,
+      name: item.name,
+      image: item.image ?? "",
+      subtitle: item.subtitle ?? "",
+      fields: item.fields ?? [],
+      type,
+    };
+
+    ctrl.open(
+      detail,
+      () => mountModal(prefix, detail),
+      () => syncFavButtonsIn(gridEl)
+    );
+  }
+
+  function renderCardItem(c) {
+    const id = escapeHtml(c.id);
+    const type = escapeHtml(c.type ?? "");
+    const name = escapeHtml(c.name ?? "Unknown");
+    const img = c.image
+      ? `<img src="${escapeHtml(c.image)}" alt="${name}" loading="lazy" />`
+      : `<div class="char-fallback" aria-hidden="true">✨</div>`;
+
+    return `
+      <div class="char-card" role="button" tabindex="0" data-open-fav="${id}" data-open-type="${type}">
+        <div class="char-imgwrap">
+          ${img}
+          <button
+            class="fav-overlay"
+            type="button"
+            data-remove-id="${id}"
+            data-remove-type="${type}"
+            aria-label="Remove favorite: ${name}"
+            aria-pressed="true"
+            title="Remove favorite"
+          >★</button>
+        </div>
+        <div class="char-name">${name}</div>
+      </div>
+    `;
+  }
+
+  function renderSpellItem(c) {
+    const id = escapeHtml(c.id);
+    const name = escapeHtml(c.name ?? "Unknown");
+    const description = escapeHtml(c.description ?? c.subtitle ?? "—");
+
+    return `
+      <div class="spell-item">
+        <div class="spell-item-content">
+          <div class="spell-item-name">${name}</div>
+          <div class="spell-item-desc">${description}</div>
+        </div>
+        <button
+          class="fav-overlay-spell"
+          type="button"
+          data-remove-id="${id}"
+          data-remove-type="spell"
+          aria-label="Remove favorite: ${name}"
+          aria-pressed="true"
+          title="Remove favorite"
+        >★</button>
+      </div>
+    `;
+  }
+
   function render(items) {
     if (!items.length) {
       gridEl.innerHTML = `
         <div class="meta">
-          No favorites yet. Go to <a href="#/">Characters</a> and press ☆.
+          No favorites yet. Go to
+          <a href="#/characters">Characters</a>,
+          <a href="#/locations">Locations</a>,
+          <a href="#/spells">Spells</a> or
+          <a href="#/beasts">Beasts</a>
+          and press ☆.
         </div>
       `;
       statusEl.textContent = "";
       return;
     }
 
-    gridEl.innerHTML = items
-      .map((c) => {
-        const id = escapeHtml(c.id);
-        const name = escapeHtml(c.name ?? "Unknown");
-        const img = c.image
-          ? `<img src="${escapeHtml(c.image)}" alt="${name}" loading="lazy" />`
-          : `<div class="char-fallback" aria-hidden="true">✨</div>`;
+    const groups = {};
+    for (const item of items) {
+      const type = item.type ?? "character";
+      if (!groups[type]) groups[type] = [];
+      groups[type].push(item);
+    }
 
-        
+    gridEl.innerHTML = TYPE_ORDER
+      .filter(type => groups[type]?.length)
+      .map(type => {
+        const label = TYPE_LABELS[type] ?? type;
+        const isSpell = type === "spell";
+
+        const itemsHtml = isSpell
+          ? `<div class="fav-spell-list">${groups[type].map(renderSpellItem).join("")}</div>`
+          : `<div class="char-grid">${groups[type].map(renderCardItem).join("")}</div>`;
+
         return `
-          <div class="char-card">
-            <div class="char-imgwrap">
-              ${img}
-
-              <button
-                class="fav-overlay"
-                type="button"
-                data-remove-id="${id}"
-                aria-label="Remove favorite: ${name}"
-                aria-pressed="true"
-                title="Remove favorite"
-              >★</button>
-            </div>
-
-            <div class="char-name">${name}</div>
-
-            <!-- Extra fält i listan (kravet) men med befintlig .meta style -->
-            <div class="meta">House: ${escapeHtml(c.house ?? "—")}</div>
-            <div class="meta">Species: ${escapeHtml(c.species ?? "—")}</div>
+          <div class="fav-section">
+            <h2 class="fav-section-title">${label}</h2>
+            ${itemsHtml}
           </div>
         `;
       })
@@ -129,25 +223,43 @@ export function mountFavoritesPage() {
     const filtered = !q
       ? favs
       : favs.filter((x) => (x.name || "").toLowerCase().includes(q));
-
     render(filtered);
     statusEl.textContent = q ? `Showing ${filtered.length} of ${favs.length}` : "";
   }
 
-  // första render
   render(favs);
 
-  // sök
   inputEl.addEventListener("input", applyFilter);
 
-  // remove
   gridEl.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-remove-id]");
-    if (!btn) return;
+    const removeBtn = e.target.closest("[data-remove-id]");
+    if (removeBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = removeBtn.getAttribute("data-remove-id");
+      const type = removeBtn.getAttribute("data-remove-type");
+      favs = removeFavorite(id, type);
+      applyFilter();
+      return;
+    }
 
-    const id = btn.getAttribute("data-remove-id");
-    favs = removeFavorite(id);
+    const card = e.target.closest("[data-open-fav]");
+    if (card) {
+      const id = card.dataset.openFav;
+      const type = card.dataset.openType;
+      const item = favs.find(f => String(f.id) === String(id) && String(f.type) === String(type));
+      if (item) openModal(item);
+    }
+  });
 
-    applyFilter();
+  gridEl.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const card = e.target.closest("[data-open-fav]");
+    if (!card) return;
+    e.preventDefault();
+    const id = card.dataset.openFav;
+    const type = card.dataset.openType;
+    const item = favs.find(f => String(f.id) === String(id) && String(f.type) === String(type));
+    if (item) openModal(item);
   });
 }

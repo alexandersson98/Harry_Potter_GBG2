@@ -57,7 +57,7 @@ body::after{
   transform: translateZ(0); /* helps rendering on some GPUs */
 }
 
-/* Dark overlay + subtle “magic” highlight for readability */
+/* Dark overlay + subtle "magic" highlight for readability */
 body::before{
   content:"";
   position: fixed;
@@ -121,10 +121,10 @@ a:hover{
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 18px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0px);
 }
 
-/* ---------- Header / Nav (works with many nav markups) ---------- */
+/* ---------- Header / Nav ---------- */
 #site-header{
   width: min(var(--max), calc(100% - 24px));
   margin: 18px auto 0;
@@ -133,8 +133,8 @@ a:hover{
 #site-header nav,
 #site-header .nav,
 #site-header .navbar{
-  background: rgba(139, 94, 60, .52); /* dark bronze glass */
-  border: 2px solid rgba(214,179,91,.22);
+  background: rgba(8, 24, 20, .45);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-soft);
   padding: 10px 14px;
@@ -142,10 +142,12 @@ a:hover{
   align-items:center;
   justify-content:space-between;
   gap: 14px;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(2px);
+  position: relative;
+  z-index: 1000;
 }
 
-/* Generic “logo/title” in header */
+/* Generic "logo/title" in header */
 #site-header h1,
 #site-header .brand,
 #site-header .logo{
@@ -165,14 +167,7 @@ a:hover{
   color: rgba(214,179,91,.95);
 }
 
-/* Try to style a common links area if you use #navLinks */
-#navLinks{
-  display:flex;
-  align-items:center;
-  gap: 16px;
-}
-
-/* Burger button (optional) */
+/* Burger button */
 #burgerBtn{
   appearance:none;
   border: 2px solid rgba(255,255,255,.22);
@@ -185,7 +180,42 @@ a:hover{
   border-color: rgba(214,179,91,.45);
 }
 
-/* Offline banner (optional) */
+/* Burger wrap + dropdown */
+.burger-wrap{
+  position: relative;
+}
+
+.dropdown-menu{
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: rgba(8, 24, 20, .97);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+  z-index: 1000;
+}
+
+.dropdown-menu a{
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 900;
+  color: rgba(255,255,255,.92);
+}
+
+.dropdown-menu a:hover{
+  background: rgba(214,179,91,.15);
+  color: rgba(214,179,91,.95);
+  text-decoration: none;
+}
+
+/* Offline banner */
 #offlineBanner{
   width: min(var(--max), calc(100% - 24px));
   margin: 10px auto 0;
@@ -221,7 +251,7 @@ a:hover{
   border: 1px solid rgba(48, 85, 64, 0.22);
   border-radius: var(--radius);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(2px);
 }
 
 .main-card{ padding: 16px; }
@@ -241,8 +271,9 @@ a:hover{
 }
 
 .aboutbox{
-  height: 220px;
-  background: rgba(214,179,91,.14);
+  padding: 12px 16px;
+  max-height: 200px;
+  background: rgba(10, 40, 30, .45);
   border-radius: 0 0 var(--radius) var(--radius);
 }
 
@@ -464,7 +495,7 @@ button:active{
   border-color: rgba(214,179,91,.65);
 }
 
-/* ===== Footer (NEW slim footer only) ===== */
+/* ===== Footer ===== */
 .site-footer{
   margin: 18px 0 26px;
 }
@@ -473,14 +504,12 @@ button:active{
   margin: 0 auto;
 }
 
-/* Slim glass bar */
 .footerbar{
-  background: rgba(139, 94, 60, .42);
-  border: 1px solid rgba(214,179,91,.20);
+  background: rgba(8, 24, 20, .45);
+  border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: 0 10px 28px rgba(0,0,0,.30);
-  backdrop-filter: blur(8px);
-
+  backdrop-filter: blur(2px);
   padding: 10px 14px;
   display:flex;
   align-items:center;
@@ -509,12 +538,10 @@ button:active{
   border-radius: 12px;
   display:grid;
   place-items:center;
-
   background: rgba(0,0,0,.18);
   border: 1px solid rgba(255,255,255,.16);
   color: rgba(255,255,255,.92);
   text-decoration:none;
-
   box-shadow: 0 5px 0 rgba(0,0,0,.22);
   transition: transform .06s ease, box-shadow .06s ease, border-color .12s ease;
 }
@@ -558,7 +585,7 @@ button:active{
 /* ===== Character Grid (responsive) ===== */
 .char-grid{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 18px;
   margin-top: 12px;
 }
@@ -613,7 +640,7 @@ button:active{
 .fav-overlay{
   position: absolute;
   top: 8px;
-  right: 2px;
+  right: 8px;
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -621,8 +648,10 @@ button:active{
   background: rgba(0,0,0,.55);
   color: var(--gold);
   font-size: 18px;
+  line-height: 1;
   display:grid;
   place-items:center;
+  padding: 0;
   box-shadow: 0 6px 16px rgba(0,0,0,.45);
 }
 
@@ -656,7 +685,7 @@ button:active{
   overflow: auto;
   z-index: 60;
 
-  background: rgba(18, 24, 38, .92);
+  background: rgba(8, 24, 20, .97);
   border: 2px solid rgba(214,179,91,.35);
   border-radius: 18px;
   box-shadow: 0 24px 80px rgba(0,0,0,.55);
@@ -761,7 +790,6 @@ button:active{
   pointer-events: none;
   z-index: 9999;
 
-  /* glow */
   background: radial-gradient(circle, rgba(124,255,178,.95) 0%, rgba(124,255,178,.15) 55%, rgba(124,255,178,0) 70%);
   box-shadow:
     0 0 10px rgba(124,255,178,.70),
@@ -779,7 +807,6 @@ button:active{
   100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
 }
 
-/* Optional: tiny particles */
 .magic-particle {
   position: fixed;
   left: 0;
@@ -802,7 +829,7 @@ button:active{
   100% { transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
 }
 
-/* HomePage wiki headings (do not affect sidebar) */
+/* HomePage wiki headings */
 .home-h2{
   margin: 18px 0 10px;
   font-size: 22px;
@@ -812,4 +839,134 @@ button:active{
   text-align: center;
   padding-bottom: 10px;
   border-bottom: 2px solid rgba(214,179,91,.22);
+}
+
+/* ===== Spell List ===== */
+.spell-group {
+  margin-bottom: 18px;
+}
+
+.spell-group-letter {
+  font-size: 22px;
+  font-weight: 1000;
+  color: var(--gold);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+.spell-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.18);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color .12s ease, background .12s ease;
+}
+
+.spell-item:hover {
+  border-color: rgba(214,179,91,.35);
+  background: rgba(0,0,0,.28);
+}
+
+.spell-item-content {
+  flex: 1;
+}
+
+.spell-item-name {
+  font-weight: 950;
+  color: rgba(255,255,255,.92);
+  margin-bottom: 4px;
+}
+
+.spell-item-desc {
+  color: rgba(255,255,255,.60);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.fav-overlay-spell {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(214,179,91,.28);
+  background: rgba(0,0,0,.55);
+  color: var(--gold);
+  font-size: 18px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.fav-overlay-spell:hover {
+  transform: scale(1.06);
+  filter: brightness(1.05);
+}
+
+.fav-overlay-spell[aria-pressed="true"] {
+  background: radial-gradient(circle at 30% 30%, #ffeeb6, #8c6a2aeb);
+  color: #0b1220;
+  border-color: rgba(214,179,91,.75);
+}
+
+/* ===== Spell Alphabet ===== */
+.spell-alphabet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+  margin-top: 8px;
+}
+
+.alpha-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px !important;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  background: rgba(0,0,0,.18) !important;
+  color: rgba(255,255,255,.70) !important;
+  font-size: 13px;
+  font-weight: 900;
+  box-shadow: none !important;
+}
+
+.alpha-btn:hover {
+  border-color: rgba(214,179,91,.45);
+  color: rgba(255,255,255,.92);
+}
+
+.alpha-btn.active {
+  background: rgba(214,179,91,.85) !important;
+  color: #0b1220 !important;
+  border-color: rgba(214,179,91,.75) !important;
+}
+
+/* ===== Favorites Sections ===== */
+.fav-section {
+  margin-bottom: 32px;
+}
+
+.fav-section-title {
+  font-size: 20px;
+  font-weight: 1000;
+  color: var(--gold);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  letter-spacing: 1px;
+}
+
+.fav-spell-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }

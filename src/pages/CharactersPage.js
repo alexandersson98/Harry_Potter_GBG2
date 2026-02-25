@@ -41,7 +41,7 @@ export function CharactersPage() {
           <article class="card main-card">
             <div class="hero" aria-label="Characters hero section">
               <div>
-                <p class="kicker">YOUR LEGACY IS WHAT YOU MAKE IT</p>
+                <p class="kicker">HARRY POTTER MAIN CHARACTERS</p>
                 <h1 class="h1">LIVE THE UNWRITTEN</h1>
                 <p class="lead">Welcome to the Wizarding World of Harry Potter!</p>
                 <p>
@@ -87,6 +87,7 @@ export function CharactersPage() {
             <section aria-label="Browse">
               <h2 class="browse-title">BROWSE</h2>
               <div class="browsebtns">
+                <a href="#/">Home</a>
                 <a href="#/characters">Characters</a>
                 <a href="#/locations">Locations</a>
                 <a href="#/spells">Spells</a>

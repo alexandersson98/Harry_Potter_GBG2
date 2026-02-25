@@ -82,11 +82,12 @@ define(['./workbox-c5fd805d'], (function (workbox) { 'use strict';
     "revision": "1f1113a0033891eb7dd81a8986faf412"
   }, {
     "url": "/Harry_Potter_GBG2/index.html",
-    "revision": "0.bdn6r4i96d8"
+    "revision": "0.uq594gitqfo"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/Harry_Potter_GBG2/index.html"), {
-    allowlist: [/^\/$/]
+    allowlist: [/^\/$/],
+    denylist: [/^\/api/]
   }));
   workbox.registerRoute(({
     url
@@ -94,6 +95,15 @@ define(['./workbox-c5fd805d'], (function (workbox) { 'use strict';
     "cacheName": "hp-api-cache",
     plugins: [new workbox.ExpirationPlugin({
       maxEntries: 200,
+      maxAgeSeconds: 86400
+    })]
+  }), 'GET');
+  workbox.registerRoute(({
+    url
+  }) => url.origin === "http://localhost:3001", new workbox.NetworkFirst({
+    "cacheName": "local-api-cache",
+    plugins: [new workbox.ExpirationPlugin({
+      maxEntries: 100,
       maxAgeSeconds: 86400
     })]
   }), 'GET');

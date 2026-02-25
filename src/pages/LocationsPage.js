@@ -58,6 +58,7 @@ export function LocationsPage() {
             <section aria-label="Browse">
               <h2 class="browse-title">BROWSE</h2>
               <div class="browsebtns">
+                <a href="#/">Home</a>
                 <a href="#/characters">Characters</a>
                 <a href="#/locations">Locations</a>
                 <a href="#/spells">Spells</a>
@@ -117,7 +118,7 @@ export async function mountLocationsPage() {
 
     gridEl.innerHTML = items.map(raw => {
       const l = mapLocation(raw);
-      const fav = isFavorite(String(l.id));
+      const fav = isFavorite(String(l.id), "location");
       return `
         <div class="char-card" role="button" tabindex="0" data-open-id="${l.id}">
           <div class="char-imgwrap">
@@ -211,6 +212,7 @@ export async function mountLocationsPage() {
       const raw = all.find(x => String(x.id) === id);
       if (!raw) return;
       const mapped = mapLocation(raw);
+      mapped.type = "location";
       toggleFavInGrid(id, mapped, favBtnEl);
       return;
     }

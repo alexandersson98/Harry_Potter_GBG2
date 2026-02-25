@@ -2,19 +2,23 @@ export function Nav() {
   return `
     <header class="site-header">
       <div class="container">
-        <nav class="navbar" aria-label="Huvudnavigering">
-          <a class="brand" href="#/">Wizardpedia - Harry Potter Wiki</a>
+        <nav class="navbar" aria-label="Mainnav">
+          <span class="brand">Wizardpedia - Harry Potter Wiki</span>
 
-          <div class="navlinks" id="navLinks">
-            <a href="#/characters">🔍 Browse Characters</a>
-            <a href="#/favorites">⭐ Favorites</a>
-            <a href="#/about">About us</a>
+          <div class="burger-wrap">
+            <button class="burger" id="burgerBtn" type="button"
+              aria-label="Öppna meny" aria-expanded="false">
+              ☰
+            </button>
+            <div class="dropdown-menu" id="navLinks" style="display:none;">
+              <a href="#/">Home</a>
+              <a href="#/characters">Characters</a>
+              <a href="#/locations">Locations</a>
+              <a href="#/spells">Spells</a>
+              <a href="#/beasts">Beasts</a>
+              <a href="#/favorites">Favorites</a>
+            </div>
           </div>
-
-          <button class="burger" id="burgerBtn" type="button"
-            aria-label="Öppna meny" aria-expanded="false">
-            ☰
-          </button>
         </nav>
 
         <div class="offline-banner" id="offlineBanner" role="alert" aria-live="polite">
