@@ -86,16 +86,23 @@ export function createRouter(outletSelector) {
   }
 
   async function render() {
-    const { path, rest, params } = parseHash();
-    const page = routes[path] || routes.notFound;
+  const { path, rest, params } = parseHash();
+  const page = routes[path] || routes.notFound;
 
-    setNavVisible(page.showNav !== false);
+  setNavVisible(page.showNav !== false);
 
-    const ctx = { path, rest, params };
+  const ctx = { path, rest, params };
 
-    outlet.innerHTML = page.view(ctx);
-    await page.mount?.(ctx);
-  }
+  outlet.innerHTML = page.view(ctx);
+  await page.mount?.(ctx);
+
+  // Sätt aria-current efter att sidan renderats
+  const hash = (location.hash || "#/").slice(1);
+  document.querySelectorAll("#navLinks a, .browsebtns a").forEach(a => {
+    const href = a.getAttribute("href")?.slice(1) || "/";
+    a.setAttribute("aria-current", href === hash ? "page" : "false");
+  });
+}
 
   window.addEventListener("hashchange", render);
   render();

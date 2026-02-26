@@ -163,6 +163,11 @@ export async function mountLocationsPage() {
     if (!raw) return;
 
     active = mapLocation(raw);
+    active.type = "location";
+    active.subtitle = raw.type ?? "—";
+    active.fields = [
+      { label: "Description", value: raw.description },
+    ];
 
     titleEl.textContent = active.name;
     subEl.textContent = active.type;
@@ -173,22 +178,10 @@ export async function mountLocationsPage() {
           <span>Description</span>
           <strong>${active.description}</strong>
         </div>
-        <div>
-          <span>Characters</span>
-          <strong>${active.characters.join(", ") || "—"}</strong>
-        </div>
-        <div>
-          <span>Beasts</span>
-          <strong>${active.beasts.join(", ") || "—"}</strong>
-        </div>
-        <div>
-          <span>Spells</span>
-          <strong>${active.spells.join(", ") || "—"}</strong>
-        </div>
       </div>
     `;
 
-    syncFavButton(favBtn, active.id);
+    syncFavButton(favBtn, active.id, "location");
 
     lastFocus = document.activeElement;
     backdrop.hidden = false;
@@ -213,6 +206,10 @@ export async function mountLocationsPage() {
       if (!raw) return;
       const mapped = mapLocation(raw);
       mapped.type = "location";
+      mapped.subtitle = raw.type ?? "—";
+      mapped.fields = [
+        { label: "Description", value: raw.description },
+      ];
       toggleFavInGrid(id, mapped, favBtnEl);
       return;
     }
@@ -222,10 +219,18 @@ export async function mountLocationsPage() {
     openModalById(openEl.dataset.openId);
   });
 
+  gridEl.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const openEl = e.target.closest("[data-open-id]");
+    if (!openEl) return;
+    e.preventDefault();
+    openModalById(openEl.dataset.openId);
+  });
+
   favBtn.addEventListener("click", () => {
     if (!active) return;
     toggleFavorite(active);
-    syncFavButton(favBtn, active.id);
+    syncFavButton(favBtn, active.id, "location");
     syncFavButtonsIn(gridEl);
   });
 
