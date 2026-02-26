@@ -82,13 +82,22 @@ define(['./workbox-c5fd805d'], (function (workbox) { 'use strict';
     "revision": "1f1113a0033891eb7dd81a8986faf412"
   }, {
     "url": "/Harry_Potter_GBG2/index.html",
-    "revision": "0.uq594gitqfo"
+    "revision": "0.utp5i9ur5s8"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/Harry_Potter_GBG2/index.html"), {
     allowlist: [/^\/$/],
-    denylist: [/^\/api/]
+    denylist: [/^\/(api|remote-api)/]
   }));
+  workbox.registerRoute(({
+    url
+  }) => url.pathname.startsWith("/api/") || url.pathname.startsWith("/remote-api/"), new workbox.NetworkFirst({
+    "cacheName": "hp-api-cache",
+    plugins: [new workbox.ExpirationPlugin({
+      maxEntries: 200,
+      maxAgeSeconds: 86400
+    })]
+  }), 'GET');
   workbox.registerRoute(({
     url
   }) => url.origin === "https://hp-api.onrender.com", new workbox.NetworkFirst({
