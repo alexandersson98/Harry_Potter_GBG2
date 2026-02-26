@@ -82,7 +82,7 @@ define(['./workbox-c5fd805d'], (function (workbox) { 'use strict';
     "revision": "1f1113a0033891eb7dd81a8986faf412"
   }, {
     "url": "/Harry_Potter_GBG2/index.html",
-    "revision": "0.utp5i9ur5s8"
+    "revision": "0.6g9obk3o08k"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/Harry_Potter_GBG2/index.html"), {

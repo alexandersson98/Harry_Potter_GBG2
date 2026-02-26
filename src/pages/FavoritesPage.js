@@ -133,7 +133,7 @@ export function mountFavoritesPage() {
       : `<div class="char-fallback" aria-hidden="true">✨</div>`;
 
     return `
-      <div class="char-card" role="button" tabindex="0" data-open-fav="${id}" data-open-type="${type}">
+      <div class="char-card" tabindex="0" data-open-fav="${id}" data-open-type="${type}">
         <div class="char-imgwrap">
           ${img}
           <button

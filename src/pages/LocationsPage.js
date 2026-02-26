@@ -120,7 +120,7 @@ export async function mountLocationsPage() {
       const l = mapLocation(raw);
       const fav = isFavorite(String(l.id), "location");
       return `
-        <div class="char-card" role="button" tabindex="0" data-open-id="${l.id}">
+        <div class="char-card" tabindex="0" data-open-id="${l.id}">
           <div class="char-imgwrap">
             ${l.image
               ? `<img src="${l.image}" alt="${l.name}" loading="lazy" />`

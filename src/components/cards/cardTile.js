@@ -1,6 +1,6 @@
 export function cardTile({ id, name, image, isFavorite }) {
   return `
-    <div class="char-card" role="button" tabindex="0" data-open-id="${encodeURIComponent(String(id))}">
+    <div class="char-card" tabindex="0" data-open-id="${encodeURIComponent(String(id))}">
       <div class="char-imgwrap">
         ${
           image
