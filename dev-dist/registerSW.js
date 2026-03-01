@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/Harry_Potter_GBG2/dev-sw.js?dev-sw', { scope: '/Harry_Potter_GBG2/', type: 'classic' })

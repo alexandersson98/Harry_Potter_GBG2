@@ -1,0 +1,203 @@
+import { mapApiToListCard } from "../adapters/mappers/mapApiToListCard";
+import { cardGrid } from "../components/cards/cardGrid";
+import { getBeast } from "../services/api/beastsApi";
+import { getBeasts } from "../services/api/beastsApi";
+import { getFavorites } from "../services/storage/favorites";
+import { mountModal } from "../controllers/modalController";
+import { createModalController } from "../controllers/modalController";
+import { toggleFavInGrid, syncFavButtonsIn } from "../controllers/favoritesController";
+import { mapApiToDetail } from "../adapters/mappers/beastMapper";
+import { modalCard } from "../components/cards/modalCard";
+
+export function beastPage(){
+    return `
+        <main class="container">
+  <section class="frame" aria-label="Beasts">
+    <div class="grid">
+
+      <article class="card main-card">
+        <div class="hero" aria-label="Beasts hero section">
+          <div>
+            <p class="kicker">MAGICAL CREATURES OF THE WIZARDING WORLD</p>
+            <h1 class="h1">DISCOVER THE BEASTS</h1>
+            <p class="lead">Explore magical beasts from the Wizarding World!</p>
+            <p>
+              Browse magical creatures and save your favorites.
+              The app also works offline once it has been loaded.
+            </p>
+          </div>
+
+          <div class="media" aria-label="Featured beast image">
+            <img
+              src="beasts.png"
+              alt="Magical creature from the Wizarding World"
+              loading="lazy"
+            />
+          </div>
+        </div>
+
+        <div class="tools" aria-label="Search and grid">
+          <div class="searchrow">
+            <label class="sr-only" for="searchBeastInput">Search beast</label>
+            <input id="searchBeastInput" type="search" placeholder="Search by name..." autocomplete="off" />
+            <button id="reloadBeastsBtn" type="button">Reload</button>
+          </div>
+
+          <div class="char-grid" id="beastGrid" aria-label="Beasts">
+            <div class="meta">Loading...</div>
+          </div>
+
+          <p id="beastStatusText" class="meta" aria-live="polite"></p>
+        </div>
+      </article>
+
+      <aside class="sidebar" aria-label="Sidebar">
+        <section class="side-card" aria-label="Tips">
+              <h2 class="side-title">Tip</h2>
+              <div style="padding:12px">
+                <p class="meta" style="margin-top:0">
+                  Use the search bar to quickly find beasts like "Basilisk" or "Hippogriff".
+                </p>
+              </div>
+            </section>
+
+        <section aria-label="Browse">
+          <h2 class="browse-title">BROWSE</h2>
+          <div class="browsebtns">
+            <a href="#/">Home</a>
+            <a href="#/characters">Characters</a>
+            <a href="#/locations">Locations</a>
+            <a href="#/spells">Spells</a>
+            <a href="#/beasts" aria-current="page">Beasts</a>
+          </div>
+        </section>
+
+        <section class="side-card" aria-label="Favorites (offline)">
+          <h2 class="side-title">Favorites</h2>
+          <div style="padding:12px">
+            <p class="meta" style="margin-top:0">
+              Favorites are saved locally and work offline.
+            </p>
+            <a class="browse-btn-like" href="#/favorites"
+              style="display:block;text-align:center;border:2px solid rgba(255,255,255,.18);padding:12px;font-weight:900;text-decoration:none;color:rgba(255,255,255,.92);background:rgba(0,0,0,.18);border-radius:14px;">
+              Open favorites
+            </a>
+          </div>
+        </section>
+      </aside>
+
+    </div>
+  </section>
+
+  <!-- MODAL (popup) -->
+   ${modalCard("beast")}
+</main>
+    `;
+}
+
+export async function mountBeastPage(){
+
+  const gridEl = document.getElementById("beastGrid");
+  const statusEl = document.getElementById("beastStatusText");
+  const inputEl = document.getElementById("searchBeastInput");
+  const reloadBtn = document.getElementById("reloadBeastsBtn");
+  let rawArr = [];
+  let shown = [];
+
+  const ctrl = createModalController({
+    backdropId: "beastModalBackdrop",
+    modalId: "beastModal",
+    closeId: "beastModalClose",
+  });
+
+  function render(list) {
+    const favSet = new Set(
+      getFavorites()
+        .filter((f) => String(f?.type) === "beast")
+        .map((f) => String(f.id))
+    );
+
+    const cardItems = list.map((raw) => {
+      const vm = mapApiToListCard(raw);
+      return { ...vm, isFavorite: favSet.has(String(vm.id)) };
+    });
+
+    gridEl.innerHTML = cardGrid({ items: cardItems });
+    statusEl.textContent = `Showing ${cardItems.length} beasts.`;
+  }
+
+  async function load() {
+    gridEl.innerHTML = `<div class="meta">Loading...</div>`;
+    statusEl.textContent = "";
+
+    try {
+      const data = await getBeasts();
+      rawArr = Array.isArray(data) ? data : data?.results ?? [];
+      shown = [...rawArr];
+      render(shown);
+    } catch (e) {
+      gridEl.innerHTML = `<div class="meta">Could not load data right now</div>`;
+      statusEl.textContent = "If you are offline, cached data may still be available.";
+      console.error(e);
+    }
+  }
+
+  await load();
+
+  // Sök
+  inputEl.addEventListener("input", () => {
+    const q = inputEl.value.trim().toLowerCase();
+    shown = rawArr.filter((x) => (x?.name ?? "").toLowerCase().includes(q));
+    render(shown);
+  });
+
+  // Reload
+  reloadBtn.addEventListener("click", load);
+
+  // Klick – favorit eller öppna modal
+  gridEl.addEventListener("click", async (e) => {
+    const favEl = e.target.closest("[data-fav-id]");
+    const openEl = e.target.closest("[data-open-id]");
+
+    if (favEl) {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = decodeURIComponent(favEl.dataset.favId);
+      const raw = rawArr.find(x => String(x.id) === id);
+      if (!raw) return;
+      const mapped = mapApiToDetail(raw);
+      mapped.type = "beast";
+      toggleFavInGrid(id, mapped, favEl);
+      return;
+    }
+
+    if (openEl) {
+      const id = decodeURIComponent(openEl.dataset.openId);
+      const raw = await getBeast(id);
+      const detail = mapApiToDetail(raw);
+      detail.type = "beast";
+      ctrl.open(
+        detail,
+        () => mountModal("beast", detail),
+        () => syncFavButtonsIn(gridEl)
+      );
+    }
+  });
+
+  // Keyboard – Enter/Space öppnar modal
+  gridEl.addEventListener("keydown", async (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const openEl = e.target.closest("[data-open-id]");
+    if (!openEl) return;
+    e.preventDefault();
+    const id = decodeURIComponent(openEl.dataset.openId);
+    const raw = await getBeast(id);
+    const detail = mapApiToDetail(raw);
+    detail.type = "beast";
+    ctrl.open(
+      detail,
+      () => mountModal("beast", detail),
+      () => syncFavButtonsIn(gridEl)
+    );
+  });
+}

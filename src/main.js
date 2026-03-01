@@ -17,7 +17,7 @@ document.querySelector("#site-footer").innerHTML = Footer();
 // Router renderar sidor inne i #outlet
 createRouter("#outlet");
 
-/* Offline banner + burger menu (om ni har id:n i Nav.js) */
+/* Offline banner + burger menu*/
 function wireOfflineBanner() {
   const banner = document.getElementById("offlineBanner");
   if (!banner) return;
@@ -36,28 +36,46 @@ function wireBurgerMenu() {
   const links = document.getElementById("navLinks");
   if (!btn || !links) return;
 
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
     const isOpen = links.style.display === "flex";
     links.style.display = isOpen ? "none" : "flex";
-    links.style.flexDirection = "column";
-    links.style.gap = "10px";
     btn.setAttribute("aria-expanded", String(!isOpen));
+  });
+
+  document.addEventListener("click", () => {
+    links.style.display = "none";
+    btn.setAttribute("aria-expanded", "false");
   });
 }
 
 wireOfflineBanner();
 wireBurgerMenu();
 
-/* Service Worker (PWA) */
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      await navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`);
-    } catch {
-      // ska inte krascha om SW failar
-    }
-  });
-}
+document.addEventListener("keydown", (e) => {
+  const focusable = Array.from(
+    document.querySelectorAll(
+      'a[href], button:not([disabled]), [tabindex="0"]'
+    )
+  ).filter(el => !el.closest("[hidden]"));
+
+  const current = document.activeElement;
+  const index = focusable.indexOf(current);
+  if (index === -1) return;
+
+  let next = null;
+
+  if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+    e.preventDefault();
+    next = focusable[index + 1] ?? focusable[0];
+  } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+    e.preventDefault();
+    next = focusable[index - 1] ?? focusable[focusable.length - 1];
+  }
+
+  next?.focus();
+});
+
 
 function spawnMagicClick(x, y) {
   // main glow ring

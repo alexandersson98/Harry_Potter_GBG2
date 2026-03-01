@@ -1,6 +1,12 @@
 
 import { HomePage, mountHomePage } from "./pages/HomePage.js";
 import { Nav } from "./components/Nav.js";
+import { SpellsPage, mountSpellsPage } from "./pages/SpellsPage.js";
+import { beastPage, mountBeastPage } from  "./pages/beastspage.js";
+import { LocationsPage, mountLocationsPage } from "./pages/LocationsPage.js";
+import { FavoritesPage, mountFavoritesPage } from "./pages/FavoritesPage.js";
+import { CharactersPage, mountCharactersPage } from "./pages/CharactersPage.js";
+
 
 export function createRouter(outletSelector) {
   const outlet = document.querySelector(outletSelector);
@@ -15,6 +21,37 @@ export function createRouter(outletSelector) {
       mount: mountHomePage,
       showNav: true,
     },
+
+    "/spells": {
+      view: SpellsPage,
+      mount: mountSpellsPage,
+      showNav: true,
+    },
+
+    "/beasts": {
+      view: beastPage,
+      mount: mountBeastPage,
+      showNav: true,
+    },
+    
+    "/locations": {
+      view: LocationsPage,
+      mount: mountLocationsPage,
+      showNav: true,
+    },
+    
+    "/favorites": {
+      view: FavoritesPage,
+      mount: mountFavoritesPage,
+      showNav: true,
+    },
+
+    "/characters": {
+      view: CharactersPage,
+      mount: mountCharactersPage,
+      showNav: true,
+    },
+
 
     notFound: {
       view: () => `<h1>404</h1><p>Sidan finns inte.</p>`,
@@ -49,16 +86,23 @@ export function createRouter(outletSelector) {
   }
 
   async function render() {
-    const { path, rest, params } = parseHash();
-    const page = routes[path] || routes.notFound;
+  const { path, rest, params } = parseHash();
+  const page = routes[path] || routes.notFound;
 
-    setNavVisible(page.showNav !== false);
+  setNavVisible(page.showNav !== false);
 
-    const ctx = { path, rest, params };
+  const ctx = { path, rest, params };
 
-    outlet.innerHTML = page.view(ctx);
-    await page.mount?.(ctx);
-  }
+  outlet.innerHTML = page.view(ctx);
+  await page.mount?.(ctx);
+
+  // Sätt aria-current efter att sidan renderats
+  const hash = (location.hash || "#/").slice(1);
+  document.querySelectorAll("#navLinks a, .browsebtns a").forEach(a => {
+    const href = a.getAttribute("href")?.slice(1) || "/";
+    a.setAttribute("aria-current", href === hash ? "page" : "false");
+  });
+}
 
   window.addEventListener("hashchange", render);
   render();
