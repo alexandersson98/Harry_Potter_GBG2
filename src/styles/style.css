@@ -585,9 +585,14 @@ button:active{
 /* ===== Character Grid (responsive) ===== */
 .char-grid{
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 18px;
   margin-top: 12px;
+}
+@media (max-width: 360px){
+  .char-grid{
+    grid-template-columns: 1fr;
+  }
 }
 
 .char-card{
