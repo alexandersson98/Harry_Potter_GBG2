@@ -1,5 +1,29 @@
 Wizardpedia – Harry Potter Wiki PWA
 
+
+Sluttester – Android och iOS
+
+Applikationen har testats manuellt på både Android och iOS för att verifiera funktionalitet, responsivitet och offline-stöd.
+
+Android
+
+Test utfördes på Android-enhet med Chrome.
+Applikationen laddade korrekt online och navigering mellan sidor fungerade utan fel. Favoritfunktioner och interaktiva komponenter fungerade som förväntat. Appen kunde installeras via “Lägg till på startskärmen”.
+
+Offline testades genom att stänga av nätverket efter första laddning. Applikationens gränssnitt och lokalt cacheat innehåll laddades korrekt offline. Externa API-baserade data var begränsade offline men hanterades utan att applikationen kraschade.
+
+iOS
+
+Test utfördes på iPhone med Safari.
+Applikationen laddade korrekt online och layouten fungerade på mobilskärm. Appen kunde installeras via “Add to Home Screen”. Navigation, favoriter och användargränssnitt fungerade som förväntat.
+
+Offline testades genom flygplansläge efter initial laddning. Applikationen startade och visade cacheat innehåll. Begränsningar noterades för externa API-data offline, vilket är en känd begränsning i iOS PWA-stöd.
+
+Sammanfattning
+
+Applikationen fungerar på både Android och iOS i moderna webbläsare. Grundläggande funktionalitet, responsiv design och offline-läge verifierades genom manuella tester. Begränsningar finns för innehåll som kräver nätverksanslutning, men applikationen hanterar dessa fall utan att krascha.
+
+
 Wizardpedia är en Progressive Web App (PWA) byggd som en Harry Potter-wiki där användare kan bläddra bland karaktärer, platser, magiska varelser och trollformler. Appen fungerar offline och kan installeras som en PWA via webbläsaren.
 
 📌 Datakällor och backend-arkitektur
